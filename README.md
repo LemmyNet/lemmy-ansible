@@ -16,26 +16,34 @@ To run this playbook, you need to:
 
 Run the following commands:
 
+
+Clone lemmy-docker-ansible-deploy: 
+
 ```
-# Clone lemmy-docker-ansible-deploy
 git clone https://github.com/LemmyNet/lemmy-docker-ansible-deploy.git
 cd lemmy-docker-ansible-deploy
-
-# Make a directory to hold your config
-mkdir inventory/host_vars/matrix.<your-domain>
-
-# Copy the sample configuration file 
-cp examples/config.hjson inventory/host_vars/matrix.<your-domain>/config.hjson
-# Edit that file to change a few passwords, and change the config to your liking
-
-# Copy the sample inventory hosts file 
-cp examples/hosts inventory/hosts
-# Edit the inventory hosts file (inventory/hosts) to your liking
-
-# Run the playbook
-ansible-playbook -i inventory/hosts lemmy.yml --become
-
-# If the command above fails, you may need to comment out this line
-# In the ansible.cfg file:
-# interpreter_python=/usr/bin/python3
 ```
+
+Make a directory to hold your config: 
+
+`mkdir inventory/host_vars/<your-domain>`
+
+Copy the sample configuration file:
+
+`cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
+
+Edit that file to change a few passwords, and change the config to your liking.
+
+Copy the sample inventory hosts file:
+
+`cp examples/hosts inventory/hosts`
+
+Edit the inventory hosts file (inventory/hosts) to your liking.
+
+Run the playbook: 
+
+`ansible-playbook -i inventory/hosts lemmy.yml --become`
+
+If the command above fails, you may need to comment out this line In the ansible.cfg file:
+
+`interpreter_python=/usr/bin/python3`
