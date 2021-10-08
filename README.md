@@ -32,7 +32,7 @@ Copy the sample configuration file:
 
 `cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
 
-Edit that file to change a few passwords, and change the config to your liking.
+Edit that file and change the config to your liking.
 
 Copy the sample inventory hosts file:
 
