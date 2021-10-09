@@ -50,7 +50,7 @@ If the command above fails, you may need to comment out this line In the ansible
 - Back up your existing docker folder.
 - Run `docker-compose stop` to stop lemmy.
 - Move your docker folders on the server to `<lemmy_base_dir>/<your-domain>`.
-- Copy your postgres password to `passwords/<your-user>@<your-domain>/postgres`.
+- Copy your postgres password to `inventory/host_vars/<your-domain>/passwords/postgres`.
 - Follow the install guide above, making sure your `config.hjson` is the same as your backup.
 
 ## Uninstall
