@@ -22,7 +22,7 @@
 
   - name: stop docker-compose
     docker_compose:
-      project_src: '{{lemmy_base_dir}}'
+      project_src: '{{lemmy_base_dir}}/{{domain}}'
       state: absent
 
   - name: delete data
@@ -30,16 +30,8 @@
       path: '{{item.path}}'
       state: absent
     with_items:
-      - path: '{{lemmy_base_dir}}'
-      - path: '/etc/nginx/sites-enabled/lemmy.conf'
-
-  - name: Remove a volume
-    docker_volume:
-      name: '{{item.name}}'
-      state: absent
-    with_items:
-      - name: 'lemmy_lemmy_db'
-      - name: 'lemmy_lemmy_pictshare'
+      - path: '{{lemmy_base_dir}}/{{domain}}'
+      - path: '/etc/nginx/sites-enabled/{{domain}}.conf'
 
   - name: delete entire ecloud folder
     file:
