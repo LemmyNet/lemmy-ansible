@@ -75,7 +75,7 @@
           mode: '0644'
       vars:
         lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version }}"
-        lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_version }}"
+        lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version) }}"
         lemmy_port: "8536"
         lemmy_ui_port: "1235"
 

@@ -6,7 +6,9 @@
 #                                              to get notifications if your ssl cert expires
 # - `lemmy_base_dir=/srv/lemmy`: the location on the server where lemmy can be installed, can be any folder
 #                                if you are upgrading from a previous version, set this to `/lemmy`
-myuser@example.com  domain=example.com  letsencrypt_contact_email=your@email.com lemmy_base_dir=/srv/lemmy
+# - `lemmy_version`: The back end version.
+# - `lemmy_ui_version`: <Optional> overrides the front end version.
+myuser@example.com  domain=example.com  letsencrypt_contact_email=your@email.com  lemmy_base_dir=/srv/lemmy  lemmy_version=0.13.0
 
 [all:vars]
 ansible_connection=ssh
