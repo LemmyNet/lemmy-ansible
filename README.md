@@ -1,10 +1,10 @@
-# Lemmy-Docker-Ansible-Deploy
+# Lemmy-Ansible
 
 This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server.
 
 ## Requirements
 
-To run this playbook, you need to:
+To run this ansible playbook, you need to:
 
 - Have a server / VPS where lemmy will run.
 - Configure a DNS `A` Record to point at your server's IP address.
@@ -14,14 +14,11 @@ To run this playbook, you need to:
 
 ## Deploy steps
 
-Run the following commands:
-
-
 Clone lemmy-docker-ansible-deploy: 
 
 ```
-git clone https://github.com/LemmyNet/lemmy-docker-ansible-deploy.git
-cd lemmy-docker-ansible-deploy
+git clone https://github.com/LemmyNet/lemmy-ansible.git
+cd lemmy-ansible
 ```
 
 Make a directory to hold your config: 
