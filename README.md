@@ -10,7 +10,6 @@ To run this ansible playbook, you need to:
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it: `ssh <your-user>@<your-domain>`
 - Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.
-- Install the [Docker SDK for Python](https://pypi.org/project/docker/) using `pip install docker` ([more info in Ansible documentation](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_compose_module.html#id4)).
 
 ## Install
 
