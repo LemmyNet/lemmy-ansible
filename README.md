@@ -1,6 +1,6 @@
 # Lemmy-Ansible
 
-This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server.
+This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server. It automatically sets up an nginx server, letsencrypt certificates, and email.
 
 ## Requirements
 
@@ -9,12 +9,12 @@ To run this ansible playbook, you need to:
 - Have a server / VPS where lemmy will run.
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it: `ssh <your-user>@<your-domain>`
-- Install [Ansible](https://www.ansible.com/) on your local machine.
-
+- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.
+- Install the [Docker SDK for Python](https://pypi.org/project/docker/) using `pip install docker` ([more info in Ansible documentation](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_compose_module.html#id4)).
 
 ## Install
 
-Clone lemmy-docker-ansible-deploy: 
+Clone this repo: 
 
 ```
 git clone https://github.com/LemmyNet/lemmy-ansible.git
@@ -44,6 +44,12 @@ Run the playbook:
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
 `interpreter_python=/usr/bin/python3`
+
+## Upgrading
+
+- Run `git pull`
+- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last. 
+- Run `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ## Migrating your existing install to use this deploy
 
