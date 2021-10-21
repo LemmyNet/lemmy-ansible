@@ -52,7 +52,7 @@ If the command above fails, you may need to comment out this line In the ansible
 
 ## Migrating your existing install to use this deploy
 
-- Back up your existing docker folder.
+- [Follow this guide](https://join-lemmy.org/docs/en/administration/backup_and_restore.html) to backup your existing install.
 - Run `docker-compose stop` to stop lemmy.
 - Move your docker folders on the server to `<lemmy_base_dir>/<your-domain>`.
 - Copy your postgres password to `inventory/host_vars/<your-domain>/passwords/postgres`.
