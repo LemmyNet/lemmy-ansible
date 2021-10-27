@@ -28,7 +28,7 @@ Copy the sample configuration file:
 
 `cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
 
-Edit that file and change the config to your liking.
+Edit that file and change the config to your liking. [Here are all the config options.](https://join-lemmy.org/docs/en/administration/configuration.html#full-config-with-default-values)
 
 Copy the sample inventory hosts file:
 
