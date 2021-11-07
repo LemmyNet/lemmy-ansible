@@ -61,6 +61,11 @@
         owner: '991'
 
   - block:
+    - set_fact:
+        lemmy_port: "{{ 32767 |random(start=1024) }}"
+        lemmy_ui_port: "{{ 32767 |random(start=1024) }}"
+        pictrs_port: "{{ 32767 |random(start=1024) }}"
+
     - name: add template files
       template:
         src: '{{item.src}}'
@@ -76,8 +81,6 @@
       vars:
         lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
         lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
-        lemmy_port: "8536"
-        lemmy_ui_port: "1235"
 
     - name: add the config.hjson
       template:
