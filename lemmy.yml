@@ -29,18 +29,7 @@
         - 'docker-compose'
         - 'docker.io'
         - 'certbot'
-
-  - name: install certbot-nginx on ubuntu < 20
-    apt:
-      pkg:
-        - 'python-certbot-nginx'
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<')
-
-  - name: install certbot-nginx on ubuntu > 20
-    apt:
-      pkg:
         - 'python3-certbot-nginx'
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=')
 
   - name: request initial letsencrypt certificate
     command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
