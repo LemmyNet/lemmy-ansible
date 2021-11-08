@@ -22,7 +22,7 @@ cd lemmy-ansible
 
 Make a directory to hold your config: 
 
-`mkdir inventory/host_vars/<your-domain>`
+`mkdir -p inventory/host_vars/<your-domain>`
 
 Copy the sample configuration file:
 
