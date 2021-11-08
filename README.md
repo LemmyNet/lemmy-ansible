@@ -17,6 +17,15 @@ Clone this repo:
 
 ```
 git clone https://github.com/LemmyNet/lemmy-ansible.git
+```
+
+Configure folders:
+```
+mkdir -p lemmy-ansible/inventory/{host_vars,hosts}
+```
+
+Move into the folder:
+```
 cd lemmy-ansible
 ```
 
