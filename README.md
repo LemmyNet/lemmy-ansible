@@ -16,16 +16,11 @@ To run this ansible playbook, you need to:
 Clone this repo: 
 
 ```
+# Git clone repository
 git clone https://github.com/LemmyNet/lemmy-ansible.git
-```
-
-Configure folders:
-```
+# Configure Folders
 mkdir -p lemmy-ansible/inventory/{host_vars,hosts}
-```
-
-Move into the folder:
-```
+# Move into the repository
 cd lemmy-ansible
 ```
 
