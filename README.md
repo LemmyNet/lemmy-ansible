@@ -10,6 +10,39 @@ To run this ansible playbook, you need to:
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it: `ssh <your-user>@<your-domain>`
 - Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.
+- Install the Python NGINX Plugin for Certbot [`python3-certbot-nginx`](https://packages.debian.org/bullseye/python3-certbot-nginx)
+
+You must also have a user, with home access.
+```
+adduser --home /home/lemmy lemmy
+```
+Lemmy's ansible currently requires no password with sudo.
+run `visudo` and append the following:
+```
+lemmy ALL=(ALL) NOPASSWD: ALL
+```
+Run `ssh-key-gen` on your local laptop and copy the *.pub files contents to /home/lemmy/.ssh/autorized_keys
+also copy the private key ( non-.pub file ) into /home/lemmy/.ssh. You can cat the file contenets and paste then into the VPS.
+
+Append the following to /home/lemmy/.ssh/config
+
+```
+Host {domain}
+  HostName {domain}
+  User user
+  IdentityFile ~/.ssh/{ssh-key-name}
+  IdentitiesOnly yes
+```
+
+It is also recommended to run `visudo` and change `PasswordAuthentication yes` to `PasswordAuthentication no`
+
+next run:
+```
+cd /home/lemmy
+sudo -i -u lemmy
+```
+
+And you are free to move onto the next segment. 
 
 ## Install
 
