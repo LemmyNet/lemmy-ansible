@@ -24,8 +24,8 @@ run `visudo` and append the following:
 lemmy ALL=(ALL) NOPASSWD: ALL
 ```
 Run `ssh-key-gen` on your local laptop and copy the `*.pub` files contents to `/home/lemmy/.ssh/autorized_keys`
-also copy the private key ( non-.pub file created with ssh-key-gen ) into `/home/lemmy/.ssh/` directory. You can cat the file contenets and paste then into the server via ssh.
-**Optional**: It is also possible to use instead use scp to share the private key `scp {private key} root@{ip-address}:/home/lemmy/.ssh/` replace any variables signified with {} ).
+also copy the private key ( non-.pub file created with ssh-key-gen ) into `/home/lemmy/.ssh/` directory.<br>
+**Optional**: It is also possible to use instead use scp to share the private key `scp {private key} root@{ip-address}:/home/lemmy/.ssh/` replace any variables signified with `{}` ).<br>
 **Optional**: You can automatically share the .pub key with ssh-copy-id but it is best to copy the private key manually run [`man ssh-copy-id`](https://linux.die.net/man/1/ssh-copy-id) for more information.
 
 Append the following to `/home/lemmy/.ssh/config` ( the file might not have anything in it yet, this is normal )
