@@ -12,6 +12,7 @@ steps:
     image: alpine:3
     user: root
     commands:
+      - apk add git
       - git fetch --tags
 
   - name: check ansible format
