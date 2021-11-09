@@ -38,7 +38,8 @@ Host {domain}
   IdentitiesOnly yes
 ```
 
-It is also recommended to run `visudo` and change `PasswordAuthentication yes` to `PasswordAuthentication no`
+It is also recommended to disable non-key/password authentication for SSH.<br>
+run `visudo` and change `PasswordAuthentication yes` to `PasswordAuthentication no`
 
 next run:
 ```
