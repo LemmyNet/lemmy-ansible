@@ -21,10 +21,10 @@ run `visudo` and append the following:
 ```
 lemmy ALL=(ALL) NOPASSWD: ALL
 ```
-Run `ssh-key-gen` on your local laptop and copy the *.pub files contents to /home/lemmy/.ssh/autorized_keys
-also copy the private key ( non-.pub file ) into /home/lemmy/.ssh. You can cat the file contenets and paste then into the VPS.
+Run `ssh-key-gen` on your local laptop and copy the `*.pub` files contents to `/home/lemmy/.ssh/autorized_keys`
+also copy the private key ( non-.pub file created with ssh-key-gen ) into `/home/lemmy/.ssh/`. You can cat the file contenets and paste then into the VPS.
 
-Append the following to /home/lemmy/.ssh/config
+Append the following to `/home/lemmy/.ssh/config`
 
 ```
 Host {domain}
