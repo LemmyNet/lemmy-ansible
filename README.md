@@ -9,7 +9,7 @@ To run this ansible playbook, you need to:
 - Have a server / VPS where lemmy will run.
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it: `ssh <your-user>@<your-domain>`
-- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.
+- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.<br><br>
 Can be ingnored if you are using another web server:
 - Install [NGINX](http://nginx.org/en/download.html) | Linux Install Instruction: [https://nginx.org/en/linux_packages.html](https://nginx.org/en/linux_packages.html)
 - Install the Python NGINX Plugin for Certbot [`python3-certbot-nginx`](https://packages.debian.org/bullseye/python3-certbot-nginx)
