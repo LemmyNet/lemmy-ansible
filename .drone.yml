@@ -1,0 +1,23 @@
+---
+kind: pipeline
+name: amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+
+  - name: prepare repo
+    image: alpine:3
+    user: root
+    commands:
+      - git fetch --tags
+
+  - name: check ansible format
+    image: alpine:3
+    commands:
+      - apk add ansible
+      - ansible-playbook lemmy.yml --syntax-check
+
+
