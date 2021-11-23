@@ -9,7 +9,7 @@ To run this ansible playbook, you need to:
 - Have a server / VPS where lemmy will run.
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it, with a sudo user: `ssh <your-user>@<your-domain>`
-- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine.
+- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your **local** machine (do not install it on your destination server).
 
 ## Install
 
@@ -38,7 +38,7 @@ Edit the inventory hosts file (inventory/hosts) to your liking.
 
 Run the playbook: 
 
-`ansible-playbook -i inventory/hosts lemmy.yml --become`
+`ansible-playbook -i inventory/hosts lemmy.yml --become -K`
 
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
