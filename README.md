@@ -38,7 +38,7 @@ Edit the inventory hosts file (inventory/hosts) to your liking.
 
 Run the playbook: 
 
-`ansible-playbook -i inventory/hosts lemmy.yml --become -K`
+`ansible-playbook -i inventory/hosts lemmy.yml`
 
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
