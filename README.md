@@ -40,6 +40,10 @@ Run the playbook:
 
 `ansible-playbook -i inventory/hosts lemmy.yml`
 
+*Note*: if you are not the root user or don't have password-less sudo, use this command:
+
+`ansible-playbook -i inventory/hosts lemmy.yml --ask-become-pass`
+
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
 `interpreter_python=/usr/bin/python3`
