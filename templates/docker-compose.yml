@@ -37,7 +37,7 @@ services:
     restart: always
 
   pictrs:
-    image: asonix/pictrs:v0.2.6-r2
+    image: asonix/pictrs:0.3.0-beta.11
     user: 991:991
     ports:
       - "127.0.0.1:{{ pictrs_port }}:8080"
