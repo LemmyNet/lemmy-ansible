@@ -42,7 +42,7 @@ Run the playbook:
 
 *Note*: if you are not the root user or don't have password-less sudo, use this command:
 
-`ansible-playbook -i inventory/hosts lemmy.yml --become -K`
+`ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
