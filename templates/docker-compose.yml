@@ -23,6 +23,8 @@ services:
       - LEMMY_INTERNAL_HOST=lemmy:8536
       - LEMMY_EXTERNAL_HOST={{ domain }}
       - LEMMY_HTTPS=true
+    volumes:
+      - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
     depends_on: 
       - lemmy
 
