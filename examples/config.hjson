@@ -11,6 +11,6 @@
   email: {
     smtp_server: "postfix:25"
     smtp_from_address: "noreply@{{ domain }}"
-    use_tls: false
+    tls_type: "none"
   }
 }
