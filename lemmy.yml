@@ -65,12 +65,30 @@
           dest: '{{lemmy_base_dir}}/{{domain}}/docker-compose.yml'
           mode: '0600'
         - src: 'templates/nginx.conf'
-          dest: '/etc/nginx/sites-enabled/{{domain}}.conf'
+          dest: '/etc/nginx/sites-available/{{domain}}.conf'
           mode: '0644'
       vars:
         lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
         lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
 
+    - block:
+      - name: gather stats on site enabled config
+        stat:
+          path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+        register: reg_enabled
+
+      - name: remove if regular file (legacy) instead of symlink
+        file:
+          path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+          state: absent
+        when: reg_enabled.stat.isreg
+
+      - name: enable nginx site
+        file:
+          src: '../sites-available/{{domain}}.conf'
+          dest: "/etc/nginx/sites-enabled/{{domain}}.conf"
+          state: link
+          
     - name: add the config.hjson
       template:
         src: 'inventory/host_vars/{{domain}}/config.hjson'
