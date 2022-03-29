@@ -8,6 +8,9 @@
   }
   hostname: "{{ domain }}"
   pictrs_url: "http://pictrs:8080"
+  federation: {
+    enabled: true
+  }
   email: {
     smtp_server: "postfix:25"
     smtp_from_address: "noreply@{{ domain }}"
