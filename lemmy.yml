@@ -81,7 +81,7 @@
         file:
           path: "/etc/nginx/sites-enabled/{{domain}}.conf"
           state: absent
-        when: reg_enabled.stat.isreg
+        when: reg_enabled
 
       - name: enable nginx site
         file:
