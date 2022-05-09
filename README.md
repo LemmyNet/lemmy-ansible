@@ -67,3 +67,7 @@ If the command above fails, you may need to comment out this line In the ansible
 ## Uninstall
 
 `ansible-playbook -i inventory/hosts uninstall.yml --become`
+
+## License
+
+- [AGPL License](/LICENSE)
