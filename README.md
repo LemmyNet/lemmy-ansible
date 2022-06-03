@@ -46,6 +46,12 @@ Run the playbook:
 
 `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
+*Note*: if you haven't set up ssh keys, and ssh using a password, use the command:
+
+`ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
+
+[Full ansible command-line docs](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html)
+
 If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
 `interpreter_python=/usr/bin/python3`
