@@ -15,8 +15,8 @@ services:
       - pictrs
     logging:
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
@@ -33,8 +33,8 @@ services:
       - lemmy
     logging:
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
   postgres:
     image: postgres:12-alpine
@@ -47,8 +47,8 @@ services:
     restart: always
     logging:
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
   pictrs:
     image: asonix/pictrs:0.3.1
@@ -61,8 +61,8 @@ services:
     mem_limit: 200m
     logging:
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
   postfix:
     image: mwader/postfix-relay
@@ -71,5 +71,5 @@ services:
     restart: "always"
     logging:
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
