@@ -13,6 +13,10 @@ services:
     depends_on:
       - postgres
       - pictrs
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "10"
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
@@ -27,6 +31,10 @@ services:
       - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
     depends_on: 
       - lemmy
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "10"
 
   postgres:
     image: postgres:12-alpine
@@ -37,6 +45,10 @@ services:
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data
     restart: always
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "10"
 
   pictrs:
     image: asonix/pictrs:0.3.1
@@ -47,9 +59,17 @@ services:
       - ./volumes/pictrs:/mnt
     restart: always
     mem_limit: 200m
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "10"
 
   postfix:
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
     restart: "always"
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "10"
