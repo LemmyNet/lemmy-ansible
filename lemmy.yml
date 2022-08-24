@@ -31,6 +31,9 @@
         - 'certbot'
         - 'python3-certbot-nginx'
 
+  - name: copy docker config
+    copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
+
   - name: request initial letsencrypt certificate
     command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
     args:
