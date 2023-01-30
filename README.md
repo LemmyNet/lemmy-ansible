@@ -13,14 +13,14 @@ To run this ansible playbook, you need to:
 
 ## Install
 
-Clone this repo: 
+Clone this repo:
 
 ```
 git clone https://github.com/LemmyNet/lemmy-ansible.git
 cd lemmy-ansible
 ```
 
-Make a directory to hold your config: 
+Make a directory to hold your config:
 
 `mkdir -p inventory/host_vars/<your-domain>`
 
@@ -38,15 +38,21 @@ Copy the sample inventory hosts file:
 
 Edit the inventory hosts file (inventory/hosts) to your liking.
 
-Run the playbook: 
+Copy the sample postgresql.conf
+
+`cp examples/customPostgresql.conf inventory/customPostgresql.conf`
+
+You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
+
+Run the playbook:
 
 `ansible-playbook -i inventory/hosts lemmy.yml`
 
-*Note*: if you are not the root user or don't have password-less sudo, use this command:
+_Note_: if you are not the root user or don't have password-less sudo, use this command:
 
 `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
-*Note*: if you haven't set up ssh keys, and ssh using a password, use the command:
+_Note_: if you haven't set up ssh keys, and ssh using a password, use the command:
 
 `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
 
@@ -59,7 +65,7 @@ If the command above fails, you may need to comment out this line In the ansible
 ## Upgrading
 
 - Run `git pull`
-- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last. 
+- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last.
 - Run `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ## Migrating your existing install to use this deploy

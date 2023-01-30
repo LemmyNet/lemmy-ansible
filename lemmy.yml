@@ -138,6 +138,15 @@
         mode: '0600'
         owner: '1000'
         group: '1000'
+
+    - name: add the customPostgresql.conf
+      template:
+        src: 'inventory/host_vars/{{domain}}/customPostgresql.conf'
+        dest: '{{lemmy_base_dir}}/{{domain}}/customPostgresql.conf'
+        mode: '0600'
+        owner: '1000'
+        group: '1000'
+
     vars:
       postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres chars=ascii_letters,digits') }}"
 

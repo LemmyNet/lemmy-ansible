@@ -36,6 +36,7 @@ services:
       - POSTGRES_DB=lemmy
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data
+      - ./customPostgresql.conf:/etc/postgresql.conf
     restart: always
 
   pictrs:
