@@ -7,9 +7,9 @@
     password: "{{ postgres_password }}"
   }
   hostname: "{{ domain }}"
-  pictrs: {
-    url: "http://pictrs:8080/"
-    api_key: "{{ postgres_password }}"
+  pictrs_url: "http://pictrs:8080"
+  federation: {
+    enabled: true
   }
   email: {
     smtp_server: "postfix:25"

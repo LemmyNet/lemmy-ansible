@@ -20,16 +20,16 @@ services:
       - "127.0.0.1:{{ lemmy_ui_port }}:1234"
     restart: always
     environment:
-      - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
-      - LEMMY_UI_LEMMY_EXTERNAL_HOST={{ domain }}
-      - LEMMY_UI_HTTPS=true
+      - LEMMY_INTERNAL_HOST=lemmy:8536
+      - LEMMY_EXTERNAL_HOST={{ domain }}
+      - LEMMY_HTTPS=true
     volumes:
       - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
     depends_on: 
       - lemmy
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:12-alpine
     environment:
       - POSTGRES_USER=lemmy
       - POSTGRES_PASSWORD={{ postgres_password }}
