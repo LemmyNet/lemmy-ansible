@@ -40,7 +40,7 @@ Edit the inventory hosts file (inventory/hosts) to your liking.
 
 Copy the sample postgresql.conf
 
-`cp examples/customPostgresql.conf inventory/customPostgresql.conf`
+`cp examples/customPostgresql.conf inventory/host_vars/<your-domain>/customPostgresql.conf`
 
 You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
