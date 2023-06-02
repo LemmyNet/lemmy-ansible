@@ -62,13 +62,12 @@
   - name: Install Docker Module for Python
     pip:
       name: docker
+      state: latest
 
   - name: Install or upgrade docker-compose
-    get_url: 
-      url : "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-Linux-x86_64"
-      dest: /usr/local/bin/docker-compose
-      mode: 'a+x'
-      force: yes
+    pip:
+      name: docker-compose
+      state: latest
 
   - name: copy docker config
     copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
