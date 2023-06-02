@@ -59,14 +59,11 @@
       state: latest
       update_cache: true
 
-  - name: Install Docker Module for Python
+  - name: Install Docker Module and docker-compose for Python
     pip:
-      name: docker
-      state: latest
-
-  - name: Install or upgrade docker-compose
-    pip:
-      name: docker-compose
+      name:
+        - docker
+        - docker-compose
       state: latest
 
   - name: copy docker config
