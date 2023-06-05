@@ -47,7 +47,7 @@ services:
     volumes:
       - ./volumes/pictrs:/mnt
     restart: always
-    mem_limit: 200m
+    mem_limit: 690m
 
   postfix:
     image: mwader/postfix-relay
