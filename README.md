@@ -64,8 +64,6 @@ To run this ansible playbook, you need to:
 
 [^1]: To create an ssh key pair with your host environment, you can follow the [instructions here](https://www.ssh.com/academy/ssh/keygen#copying-the-public-key-to-the-server), and then copy the key to your host server.
 
-
-
 ## Upgrading
 
 - Run `git pull`
