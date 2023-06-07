@@ -2,7 +2,6 @@
 - hosts: all
 
   vars_prompt:
-
     - name: confirm_uninstall
       prompt: "Do you really want to uninstall Lemmy? This will delete all data and can not be reverted [yes/no]"
       private: no
@@ -12,29 +11,28 @@
       private: no
 
   tasks:
-  - name: end play if no confirmation was given
-    debug:
-      msg: "Uninstall cancelled, doing nothing"
-    when: not confirm_uninstall|bool
+    - name: end play if no confirmation was given
+      debug:
+        msg: "Uninstall cancelled, doing nothing"
+      when: not confirm_uninstall|bool
 
-  - meta: end_play
-    when: not confirm_uninstall|bool
+    - meta: end_play
+      when: not confirm_uninstall|bool
 
-  - name: stop docker-compose
-    docker_compose:
-      project_src: '{{lemmy_base_dir}}/{{domain}}'
-      state: absent
+    - name: stop docker-compose
+      docker_compose:
+        project_src: "{{lemmy_base_dir}}/{{domain}}"
+        state: absent
 
-  - name: delete data
-    file:
-      path: '{{item.path}}'
-      state: absent
-    with_items:
-      - path: '{{lemmy_base_dir}}/{{domain}}'
-      - path: '/etc/nginx/sites-enabled/{{domain}}.conf'
+    - name: delete data
+      file:
+        path: "{{item.path}}"
+        state: absent
+      with_items:
+        - path: "{{lemmy_base_dir}}/{{domain}}"
+        - path: "/etc/nginx/sites-enabled/{{domain}}.conf"
 
-  - name: remove certbot cronjob
-    cron:
-      name: certbot-renew-lemmy
-      state: absent
-
+    - name: remove certbot cronjob
+      cron:
+        name: certbot-renew-lemmy
+        state: absent

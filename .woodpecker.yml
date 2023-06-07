@@ -1,4 +1,8 @@
 pipeline:
+  prettier_markdown_check:
+    image: tmknom/prettier
+    commands:
+      - prettier -c "*.md" "*.yml"
   check_ansible_format:
     image: alpine:3
     commands:
