@@ -3,16 +3,25 @@
 
   # Install python if required
   # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
-  gather_facts: False
+  gather_facts: True
   pre_tasks:
     - name: check lemmy_base_dir
       fail:
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
 
-    - name: install python for Ansible
+    - name: install python for Ansible (Debian)
+      when: ansible_os_family == "Debian"
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python3-minimal python3-setuptools)
+      args:
+        executable: /bin/bash
+      register: output
+      changed_when: output.stdout != ''
+
+    - name: install python for Ansible (RedHat)
+      when: ansible_os_family == "RedHat"
+      raw: test -e /usr/bin/python || (yum install python3 -y && alternatives --set python /usr/bin/python3)
       args:
         executable: /bin/bash
       register: output
@@ -21,13 +30,15 @@
     - setup: # gather facts
 
   tasks:
-    - name: Install aptitude
+    - name: Install aptitude (Debian)
+      when: ansible_os_family == "Debian"
       apt:
         name: aptitude
         state: latest
         update_cache: true
 
-    - name: install dependencies
+    - name: install dependencies (Debian)
+      when: ansible_os_family == "Debian"
       apt:
         state: latest
         update_cache: true
@@ -43,21 +54,80 @@
           - "virtualenv"
           - "python3-setuptools"
 
-    - name: Add Docker GPG apt Key
+    - name: Add Docker GPG apt Key (Debian)
+      when: ansible_os_family == "Debian"
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
-    - name: Add Docker Repository
+    - name: Add Docker Repository (Debian)
+      when: ansible_os_family == "Debian"
       apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
 
-    - name: Update apt and install docker-ce
+    - name: Update apt and install docker-ce (Debian)
+      when: ansible_os_family == "Debian"
       apt:
         name: docker-ce
         state: latest
         update_cache: true
+
+    - name: Set SELinux to permissive (Redhat)
+      when: ansible_os_family == "RedHat"
+      ansible.posix.selinux:
+        policy: targeted
+        state: permissive
+
+    - name: Stop SELinux enforcement without a reboot (Redhat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.shell: setenforce 0
+
+    - name: Remove default conflicting container packages (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.yum:
+        state: absent
+        autoremove: true
+        name:
+          - podman
+          - runc
+
+    - name: Add yum-utils and EPEL repo (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.yum:
+        state: latest
+        update_cache: true
+        name:
+          - yum-utils
+          - epel-release
+
+    - name: Add Docker CE repo (Redhat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.shell: yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install dependencies (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.yum:
+        state: latest
+        update_cache: true
+        name:
+          - nginx
+          - certbot
+          - python3-certbot-nginx
+          - ca-certificates
+          - curl
+          - python3-pip
+          - python3-virtualenv
+          - python3-setuptools
+          - python3-firewall
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+          - firewalld
 
     - name: Install Docker Module and docker-compose for Python
       pip:
@@ -68,6 +138,30 @@
 
     - name: copy docker config
       copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
+
+    - name: Permit http/https traffic (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop:
+          - http
+          - https
+
+    - name: Reload firewalld (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.systemd:
+        name: firewalld.service
+        enabled: yes
+        state: reloaded
+
+    - name: Enable and start nginx service (RedHat)
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.systemd:
+        name: nginx.service
+        enabled: yes
+        state: restarted
 
     - name: request initial letsencrypt certificate
       command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
@@ -93,7 +187,8 @@
             lemmy_ui_port: "{{ 32767 |random(start=1024) }}"
             pictrs_port: "{{ 32767 |random(start=1024) }}"
 
-        - name: add template files
+        - name: add template files (Debian)
+          when: ansible_os_family == "Debian"
           template:
             src: "{{item.src}}"
             dest: "{{item.dest}}"
@@ -104,6 +199,23 @@
               mode: "0600"
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{domain}}.conf"
+              mode: "0644"
+          vars:
+            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
+            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
+
+        - name: add template files (RedHat)
+          when: ansible_os_family == "RedHat"
+          template:
+            src: "{{item.src}}"
+            dest: "{{item.dest}}"
+            mode: "{{item.mode}}"
+          with_items:
+            - src: "templates/docker-compose.yml"
+              dest: "{{lemmy_base_dir}}/{{domain}}/docker-compose.yml"
+              mode: "0600"
+            - src: "templates/nginx.conf"
+              dest: "/etc/nginx/conf.d/{{domain}}.conf"
               mode: "0644"
           vars:
             lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
@@ -126,6 +238,7 @@
                 src: "../sites-available/{{domain}}.conf"
                 dest: "/etc/nginx/sites-enabled/{{domain}}.conf"
                 state: link
+          when: ansible_os_family == "Debian"
 
         - name: add the config.hjson
           template:
@@ -147,10 +260,10 @@
         postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres chars=ascii_letters,digits') }}"
 
     - name: enable and start docker service
-      systemd:
-        name: docker
+      ansible.builtin.systemd:
+        name: docker.service
         enabled: yes
-        state: started
+        state: restarted
 
     # - name: Change the working directory to /opt
     #   ansible.builtin.shell:
