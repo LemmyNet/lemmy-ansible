@@ -1,11 +1,5 @@
 version: "3.3"
 
-x-logging: &default-logging
-  driver: "json-file"
-  options:
-    max-size: "50m"
-    max-file: 4
-
 networks:
   # communication to web and clients
   lemmyexternalproxy:
@@ -30,7 +24,6 @@ services:
     depends_on:
       - pictrs
       - lemmy-ui
-    logging: *default-logging
   lemmy:
     image: {{ lemmy_docker_image }}
     hostname: lemmy
@@ -46,7 +39,6 @@ services:
     depends_on:
       - postgres
       - pictrs
-    logging: *default-logging
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
@@ -61,7 +53,6 @@ services:
     depends_on:
       - lemmy
     restart: always
-    logging: *default-logging
 
   pictrs:
     image: asonix/pictrs:0.4.0-beta.19
@@ -85,8 +76,10 @@ services:
     volumes:
       - ./volumes/pictrs:/mnt:Z
     restart: always
-    mem_limit: 690m
-    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 690m
 
   postgres:
     image: postgres:15-alpine
@@ -101,7 +94,6 @@ services:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
       - ./customPostgresql.conf:/etc/postgresql.conf
     restart: always
-    logging: *default-logging
 
   postfix:
     image: mwader/postfix-relay
