@@ -58,7 +58,7 @@ services:
       - LEMMY_UI_HTTPS=true
     volumes:
       - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
-    depends_on: 
+    depends_on:
       - lemmy
     restart: always
     logging: *default-logging
