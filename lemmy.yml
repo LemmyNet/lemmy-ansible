@@ -90,8 +90,6 @@
     - block:
         - set_fact:
             lemmy_port: "{{ 32767 |random(start=1024) }}"
-            lemmy_ui_port: "{{ 32767 |random(start=1024) }}"
-            pictrs_port: "{{ 32767 |random(start=1024) }}"
 
         - name: add template files
           template:
