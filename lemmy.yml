@@ -90,8 +90,6 @@
     - block:
         - set_fact:
             lemmy_port: "{{ 32767 |random(start=1024) }}"
-            lemmy_ui_port: "{{ 32767 |random(start=1024) }}"
-            pictrs_port: "{{ 32767 |random(start=1024) }}"
 
         - name: add template files
           template:
@@ -102,6 +100,9 @@
             - src: "templates/docker-compose.yml"
               dest: "{{lemmy_base_dir}}/{{domain}}/docker-compose.yml"
               mode: "0600"
+            - src: "templates/nginx_internal.conf"
+              dest: "{{lemmy_base_dir}}/{{domain}}/nginx_internal.conf"
+              mode: "0644"
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{domain}}.conf"
               mode: "0644"
