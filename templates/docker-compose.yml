@@ -1,4 +1,10 @@
-version: "3.3"
+version: "3.7"
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "4"
 
 networks:
   # communication to web and clients
@@ -21,9 +27,11 @@ services:
     volumes:
       - ./nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
     restart: always
+    logging: *default-logging
     depends_on:
       - pictrs
       - lemmy-ui
+
   lemmy:
     image: {{ lemmy_docker_image }}
     hostname: lemmy
@@ -31,9 +39,9 @@ services:
       - lemmyinternal
       - lemmyexternalproxy
     restart: always
+    logging: *default-logging
     environment:
-      - RUST_LOG="warn,lemmy_server=debug,lemmy_api=debug,lemmy_api_common=debug,lemmy_api_crud=debug,lemmy_apub=debug,lemmy_db_schema=debug,lemmy_db_views=debug,lemmy_db_views_actor=debug,lemmy_db_views_moderator=debug,lemmy_routes=debug,lemmy_utils=debug,lemmy_websocket=debug"
-      - RUST_BACKTRACE=full
+      - RUST_LOG="warn"
     volumes:
       - ./lemmy.hjson:/config/config.hjson:Z
     depends_on:
@@ -53,9 +61,10 @@ services:
     depends_on:
       - lemmy
     restart: always
+    logging: *default-logging
 
   pictrs:
-    image: asonix/pictrs:0.4.0-beta.19
+    image: asonix/pictrs:0.4.0-rc.7
     # this needs to match the pictrs url in lemmy.hjson
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
@@ -76,6 +85,7 @@ services:
     volumes:
       - ./volumes/pictrs:/mnt:Z
     restart: always
+    logging: *default-logging
     deploy:
       resources:
         limits:
@@ -94,9 +104,11 @@ services:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
       - ./customPostgresql.conf:/etc/postgresql.conf
     restart: always
+    logging: *default-logging
 
   postfix:
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
     restart: "always"
+    logging: *default-logging
