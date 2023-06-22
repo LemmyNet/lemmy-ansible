@@ -136,6 +136,31 @@
           - docker-compose
         state: latest
 
+    # See https://github.com/apache/arrow/issues/35410
+    # Fixes #89 https://github.com/LemmyNet/lemmy-ansible/issues/89
+    - name: Uninstall existing urllib3 version for certbot (Ubuntu 20.04)
+      when:
+        - ansible_os_family == "Debian"
+        - ansible_distribution == "Ubuntu"
+        - ansible_distribution_version == "20.04"
+      ansible.builtin.pip:
+        name:
+          - urllib3
+        state: absent
+
+    # See https://github.com/apache/arrow/issues/35410
+    # Fixes #89 https://github.com/LemmyNet/lemmy-ansible/issues/89
+    - name: Install correct urllib3 version for certbot (Ubuntu 20.04)
+      when:
+        - ansible_os_family == "Debian"
+        - ansible_distribution == "Ubuntu"
+        - ansible_distribution_version == "20.04"
+      ansible.builtin.pip:
+        name:
+          - urllib3>=1.26.0,<2
+        state: present
+        
+
     - name: copy docker config
       copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
 
@@ -146,8 +171,8 @@
         permanent: true
         state: enabled
       loop:
-          - http
-          - https
+        - http
+        - https
 
     - name: Reload firewalld (RedHat)
       when: ansible_os_family == "RedHat"
