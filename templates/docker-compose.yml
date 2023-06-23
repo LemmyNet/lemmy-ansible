@@ -52,6 +52,7 @@ services:
     image: {{ lemmy_docker_ui_image }}
     networks:
       - lemmyinternal
+      - lemmyexternalproxy
     environment:
       - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
       - LEMMY_UI_LEMMY_EXTERNAL_HOST={{ domain }}
@@ -71,6 +72,7 @@ services:
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
     networks:
       - lemmyinternal
+      - lemmyexternalproxy
     environment:
       - PICTRS_OPENTELEMETRY_URL=http://otel:4137
       - PICTRS__API_KEY=API_KEY
