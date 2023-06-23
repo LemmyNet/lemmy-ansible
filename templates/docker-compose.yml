@@ -110,6 +110,9 @@ services:
 
   postfix:
     image: mwader/postfix-relay
+    networks:
+      - lemmyinternal
+      - lemmyexternalproxy
     environment:
       - POSTFIX_myhostname={{ domain }}
     restart: "always"
