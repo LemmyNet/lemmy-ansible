@@ -7,18 +7,22 @@ x-logging: &default-logging
     max-file: "4"
 
 networks:
-  # communication to web and clients
-  lemmyexternalproxy:
+  default:
   # communication between lemmy services
   lemmyinternal:
     driver: bridge
-    internal: true
+  # communication to web and clients
+  lemmyexternalproxy:
+    driver: bridge
 services:
   proxy:
     image: nginx:1-alpine
+    hostname: proxy
     networks:
-      - lemmyinternal
-      - lemmyexternalproxy
+      lemmyinternal:
+        priority: 10
+      lemmyexternalproxy:
+        priority: 1000
     ports:
       # actual and only port facing any connection from outside
       # Note, change the left number if port 1236 is already in use on your system
@@ -37,7 +41,6 @@ services:
     hostname: lemmy
     networks:
       - lemmyinternal
-      - lemmyexternalproxy
     restart: always
     logging: *default-logging
     environment:
@@ -50,9 +53,9 @@ services:
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
+    hostname: lemmy-ui
     networks:
       - lemmyinternal
-      - lemmyexternalproxy
     environment:
       - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
       - LEMMY_UI_LEMMY_EXTERNAL_HOST={{ domain }}
@@ -72,7 +75,6 @@ services:
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
     networks:
       - lemmyinternal
-      - lemmyexternalproxy
     environment:
       - PICTRS_OPENTELEMETRY_URL=http://otel:4137
       - PICTRS__API_KEY=API_KEY
@@ -109,6 +111,8 @@ services:
     logging: *default-logging
 
   postfix:
+    networks:
+      - lemmyinternal
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
