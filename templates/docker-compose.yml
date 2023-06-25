@@ -7,13 +7,12 @@ x-logging: &default-logging
     max-file: "4"
 
 networks:
-  default:
+  # communication to web and clients
+  lemmyexternalproxy:
   # communication between lemmy services
   lemmyinternal:
     driver: bridge
-  # communication to web and clients
-  lemmyexternalproxy:
-    driver: bridge
+    internal: true
 services:
   proxy:
     image: nginx:1-alpine
@@ -40,7 +39,10 @@ services:
     image: {{ lemmy_docker_image }}
     hostname: lemmy
     networks:
-      - lemmyinternal
+      lemmyinternal:
+        priority: 100
+      lemmyexternalproxy:
+        priority: 10
     restart: always
     logging: *default-logging
     environment:
@@ -74,7 +76,10 @@ services:
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
     networks:
-      - lemmyinternal
+      lemmyinternal:
+        priority: 100
+      lemmyexternalproxy:
+        priority: 10
     environment:
       - PICTRS_OPENTELEMETRY_URL=http://otel:4137
       - PICTRS__API_KEY=API_KEY
@@ -112,7 +117,10 @@ services:
 
   postfix:
     networks:
-      - lemmyinternal
+      lemmyinternal:
+        priority: 100
+      lemmyexternalproxy:
+        priority: 10
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
