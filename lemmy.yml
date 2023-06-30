@@ -21,157 +21,158 @@
     - setup: # gather facts
 
   tasks:
-  - name: Install aptitude
-    apt:
-      name: aptitude
-      state: latest
-      update_cache: true
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
 
-  - name: install dependencies
-    apt:
-      state: latest
-      update_cache: true
-      pkg:
-        - 'nginx'
-        - 'certbot'
-        - 'python3-certbot-nginx'
-        - 'apt-transport-https'
-        - 'ca-certificates'
-        - 'curl'
-        - 'software-properties-common'
-        - 'python3-pip'
-        - 'virtualenv'
-        - 'python3-setuptools'
+    - name: install dependencies
+      apt:
+        state: latest
+        update_cache: true
+        pkg:
+          - "nginx"
+          - "certbot"
+          - "python3-certbot-nginx"
+          - "apt-transport-https"
+          - "ca-certificates"
+          - "curl"
+          - "software-properties-common"
+          - "python3-pip"
+          - "virtualenv"
+          - "python3-setuptools"
 
-  - name: Add Docker GPG apt Key
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-  - name: Add Docker Repository
-    apt_repository:
-      repo: deb https://download.docker.com/linux/ubuntu focal stable
-      state: present
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
 
-  - name: Update apt and install docker-ce
-    apt:
-      name: docker-ce
-      state: latest
-      update_cache: true
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
 
-  - name: Install Docker Module and docker-compose for Python
-    pip:
-      name:
-        - docker
-        - docker-compose
-      state: latest
+    - name: Install Docker Module and docker-compose for Python
+      pip:
+        name:
+          - docker
+          - docker-compose
+        state: latest
 
-  - name: copy docker config
-    copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
+    - name: copy docker config
+      copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
 
-  - name: request initial letsencrypt certificate
-    command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
-    args:
-      creates: '/etc/letsencrypt/live/{{domain}}/privkey.pem'
+    - name: request initial letsencrypt certificate
+      command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
+      args:
+        creates: "/etc/letsencrypt/live/{{domain}}/privkey.pem"
 
-  - name: create lemmy folder
-    file:
-      path: '{{item.path}}'
-      owner: '{{item.owner}}'
-      state: directory
-    with_items:
-      - path: '{{lemmy_base_dir}}/{{domain}}/'
-        owner: 'root'
-      - path: '{{lemmy_base_dir}}/{{domain}}/volumes/'
-        owner: 'root'
-      - path: '{{lemmy_base_dir}}/{{domain}}/volumes/pictrs/'
-        owner: '991'
-
-  - block:
-    - set_fact:
-        lemmy_port: "{{ 32767 |random(start=1024) }}"
-        lemmy_ui_port: "{{ 32767 |random(start=1024) }}"
-        pictrs_port: "{{ 32767 |random(start=1024) }}"
-
-    - name: add template files
-      template:
-        src: '{{item.src}}'
-        dest: '{{item.dest}}'
-        mode: '{{item.mode}}'
+    - name: create lemmy folder
+      file:
+        path: "{{item.path}}"
+        owner: "{{item.owner}}"
+        state: directory
       with_items:
-        - src: 'templates/docker-compose.yml'
-          dest: '{{lemmy_base_dir}}/{{domain}}/docker-compose.yml'
-          mode: '0600'
-        - src: 'templates/nginx.conf'
-          dest: '/etc/nginx/sites-available/{{domain}}.conf'
-          mode: '0644'
-      vars:
-        lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
-        lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
+        - path: "{{lemmy_base_dir}}/{{domain}}/"
+          owner: "root"
+        - path: "{{lemmy_base_dir}}/{{domain}}/volumes/"
+          owner: "root"
+        - path: "{{lemmy_base_dir}}/{{domain}}/volumes/pictrs/"
+          owner: "991"
 
     - block:
-      - name: gather stats on site enabled config
-        stat:
-          path: "/etc/nginx/sites-enabled/{{domain}}.conf"
-        register: reg_enabled
+        - set_fact:
+            lemmy_port: "{{ 32767 |random(start=1024) }}"
 
-      - name: remove if regular file (legacy) instead of symlink
-        file:
-          path: "/etc/nginx/sites-enabled/{{domain}}.conf"
-          state: absent
-        when: reg_enabled.stat.exists and reg_enabled.stat.isreg
+        - name: add template files
+          template:
+            src: "{{item.src}}"
+            dest: "{{item.dest}}"
+            mode: "{{item.mode}}"
+          with_items:
+            - src: "templates/docker-compose.yml"
+              dest: "{{lemmy_base_dir}}/{{domain}}/docker-compose.yml"
+              mode: "0600"
+            - src: "templates/nginx_internal.conf"
+              dest: "{{lemmy_base_dir}}/{{domain}}/nginx_internal.conf"
+              mode: "0644"
+            - src: "templates/nginx.conf"
+              dest: "/etc/nginx/sites-available/{{domain}}.conf"
+              mode: "0644"
+          vars:
+            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
+            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
 
-      - name: enable nginx site
-        file:
-          src: '../sites-available/{{domain}}.conf'
-          dest: "/etc/nginx/sites-enabled/{{domain}}.conf"
-          state: link
-          
-    - name: add the config.hjson
-      template:
-        src: 'inventory/host_vars/{{domain}}/config.hjson'
-        dest: '{{lemmy_base_dir}}/{{domain}}/lemmy.hjson'
-        mode: '0600'
-        owner: '1000'
-        group: '1000'
+        - block:
+            - name: gather stats on site enabled config
+              stat:
+                path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+              register: reg_enabled
 
-    - name: add the customPostgresql.conf
-      template:
-        src: 'inventory/host_vars/{{domain}}/customPostgresql.conf'
-        dest: '{{lemmy_base_dir}}/{{domain}}/customPostgresql.conf'
-        mode: '0600'
-        owner: '1000'
-        group: '1000'
+            - name: remove if regular file (legacy) instead of symlink
+              file:
+                path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+                state: absent
+              when: reg_enabled.stat.exists and reg_enabled.stat.isreg
 
-    vars:
-      postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres chars=ascii_letters,digits') }}"
+            - name: enable nginx site
+              file:
+                src: "../sites-available/{{domain}}.conf"
+                dest: "/etc/nginx/sites-enabled/{{domain}}.conf"
+                state: link
 
-  - name: enable and start docker service
-    systemd:
-      name: docker
-      enabled: yes
-      state: started
+        - name: add the config.hjson
+          template:
+            src: "inventory/host_vars/{{domain}}/config.hjson"
+            dest: "{{lemmy_base_dir}}/{{domain}}/lemmy.hjson"
+            mode: "0600"
+            owner: "1000"
+            group: "1000"
 
-  # - name: Change the working directory to /opt
-  #   ansible.builtin.shell:
-  #     cmd: find .                    # To list files under /opt directory
-  #     chdir: /opt                    # changes to /opt directory
-  #     register: shell_output
-  # - debug: var=shell_output     
+        - name: add the customPostgresql.conf
+          template:
+            src: "inventory/host_vars/{{domain}}/customPostgresql.conf"
+            dest: "{{lemmy_base_dir}}/{{domain}}/customPostgresql.conf"
+            mode: "0600"
+            owner: "1000"
+            group: "1000"
 
-  - name: start docker-compose
-    docker_compose:
-      project_src: '{{lemmy_base_dir}}/{{domain}}'
-      state: present
-      pull: yes
-      remove_orphans: yes
+      vars:
+        postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres chars=ascii_letters,digits') }}"
 
-  - name: reload nginx with new config
-    shell: nginx -s reload
+    - name: enable and start docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
 
-  - name: certbot renewal cronjob
-    cron:
-      special_time: daily
-      name: certbot-renew-lemmy
-      user: root
-      job: "certbot certonly --nginx --cert-name '{{ domain }}' -d '{{ domain }}' --deploy-hook 'nginx -s reload'"
+    # - name: Change the working directory to /opt
+    #   ansible.builtin.shell:
+    #     cmd: find .                    # To list files under /opt directory
+    #     chdir: /opt                    # changes to /opt directory
+    #     register: shell_output
+    # - debug: var=shell_output
+
+    - name: start docker-compose
+      docker_compose:
+        project_src: "{{lemmy_base_dir}}/{{domain}}"
+        state: present
+        pull: yes
+        remove_orphans: yes
+
+    - name: reload nginx with new config
+      shell: nginx -s reload
+
+    - name: certbot renewal cronjob
+      cron:
+        special_time: daily
+        name: certbot-renew-lemmy
+        user: root
+        job: "certbot certonly --nginx --cert-name '{{ domain }}' -d '{{ domain }}' --deploy-hook 'nginx -s reload'"
