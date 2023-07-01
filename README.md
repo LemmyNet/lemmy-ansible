@@ -44,11 +44,20 @@ To run this ansible playbook, you need to:
 
    You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
-6. (Optional) If you need advanced email configuration, copy the sample postfix.yml
+6. (Optional) If you need advanced configurations, copy the sample additional_host_var.yml file:
 
-   `cp examples/postfix.yml inventory/hosts`
-
-    Refer to https://hub.docker.com/r/mwader/postfix-relay/ for configurable variables.
+   You must copy it into `inventory/host_vars/` and rename it to the inventory
+   hostname set in `hosts` file. For example, if the inventory hostname is:
+    
+   `user@lemmy.example.com` 
+   
+   then the file must be named:
+   
+   `user@lemmy.example.com.yml`
+   
+   Remember the `.yml` extension!
+    
+   Links to additional documentation can be found in the file.
 
 7. Run the playbook:
 
