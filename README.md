@@ -44,7 +44,13 @@ To run this ansible playbook, you need to:
 
    You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
-6. Run the playbook:
+6. (Optional) If you need advanced email configuration, copy the sample postfix.yml
+
+   `cp examples/postfix.yml inventory/hosts`
+
+    Refer to https://hub.docker.com/r/mwader/postfix-relay/ for configurable variables.
+
+7. Run the playbook:
 
    `ansible-playbook -i inventory/hosts lemmy.yml`
 
