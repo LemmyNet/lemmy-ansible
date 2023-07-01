@@ -13,18 +13,18 @@ To run this ansible playbook, you need to:
 
 ## Install
 
-1. Clone this repo:
+### 1. Clone this repo:
 
    ```
    git clone https://github.com/LemmyNet/lemmy-ansible.git
    cd lemmy-ansible
    ```
 
-2. Make a directory to hold your config:
+### 2. Make a directory to hold your config:
 
    `mkdir -p inventory/host_vars/<your-domain>`
 
-3. Copy the sample configuration file:
+### 3. Copy the sample configuration file:
 
    `cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
 
@@ -32,19 +32,19 @@ To run this ansible playbook, you need to:
 
    [Here are all the config options.](https://join-lemmy.org/docs/en/administration/configuration.html#full-config-with-default-values)
 
-4. Copy the sample inventory hosts file:
+### 4. Copy the sample inventory hosts file:
 
    `cp examples/hosts inventory/hosts`
 
    Edit the inventory hosts file (inventory/hosts) to your liking.
 
-5. Copy the sample postgresql.conf
+### 5. Copy the sample postgresql.conf
 
    `cp examples/customPostgresql.conf inventory/host_vars/<your-domain>/customPostgresql.conf`
 
    You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
-6. (Optional) If you need advanced configurations, copy the sample additional_host_var.yml file:
+### 6. (Optional) If you need advanced configurations, copy the sample additional_host_var.yml file:
 
    You must copy it into `inventory/host_vars/` and rename it to the inventory
    hostname set in `hosts` file. For example, if the inventory hostname is:
@@ -59,7 +59,7 @@ To run this ansible playbook, you need to:
     
    Links to additional documentation can be found in the file.
 
-7. Run the playbook:
+### 7. Run the playbook:
 
    `ansible-playbook -i inventory/hosts lemmy.yml`
 
