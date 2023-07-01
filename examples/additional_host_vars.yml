@@ -1,0 +1,41 @@
+---
+##############################################################################
+# This file contains advanced configurations for some services.
+#
+# You must copy it into `inventory/host_vars/` and rename it to the inventory
+# hostname set in `hosts` file.  For example, if the inventory hostname is:
+#
+# user@lemmy.example.com
+#
+# then the file must be named:
+#
+# user@lemmy.example.com.yml
+#
+# Remember the `.yml` extension!
+##############################################################################
+
+
+##### Postfix Advanced Config
+# Values for these may be found in the Postfix documentation:
+# https://www.postfix.org/documentation.html
+#####
+
+## Set external SMTP relay host here IP or hostname accepted along with a port number.
+#postfix_relayhost: '[smarthost.example.com]:587'
+
+## Enable authentication to smarthost
+#postfix_smtp_sasl_auth_enable: yes
+
+## Set username and password for authentication
+#postfix_smtp_sasl_password_maps: 'static:mailer@example.com:password'
+#postfix_smtp_sasl_security_options: noanonymous
+
+## Turn on tls encryption -- this example enables STARTTLS
+#postfix_smtp_use_tls: yes
+#postfix_smtp_tls_security_level: may
+#postfix_header_size_limit: 4096000
+
+# Set correct timezone
+#postfix_tz: US/Eastern
+
+#####
