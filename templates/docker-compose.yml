@@ -89,6 +89,7 @@ services:
 
   postfix:
     image: mwader/postfix-relay
+    hostname: postfix
     environment:
       - POSTFIX_myhostname={{ domain }}
       - POSTFIX_inet_interfaces=0.0.0.0
