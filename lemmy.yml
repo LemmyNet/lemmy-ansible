@@ -45,7 +45,7 @@
           - "python3-setuptools"
 
     - name: Configure Docker apt repo before Jammy
-      #when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
       block:
         - name: Add Docker GPG apt Key
           apt_key:
