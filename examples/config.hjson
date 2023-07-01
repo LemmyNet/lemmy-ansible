@@ -13,7 +13,7 @@
   }
   email: {
     smtp_server: "postfix:25"
-    smtp_from_address: "noreply@{{ domain }}"
+    smtp_from_address: "{{ mail_from }}"
     tls_type: "none"
   }
 }
