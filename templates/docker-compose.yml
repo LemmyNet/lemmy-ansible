@@ -91,5 +91,14 @@ services:
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
-    restart: "always"
+      - POSTFIX_inet_interfaces=0.0.0.0
+      - POSTFIX_header_size_limit={{ postfix_header_size_limit | default(4096000) }}
+      - POSTFIX_relayhost={{ postfix_relayhost | default("") }}
+      - POSTFIX_smtp_sasl_auth_enable={{ postfix_smtp_sasl_auth_enable | default("no") }}
+      - POSTFIX_smtp_sasl_password_maps={{ postfix_smtp_sasl_password_maps | default("") }}
+      - POSTFIX_smtp_sasl_security_options={{ postfix_smtp_sasl_security_options | default("") }}
+      - POSTFIX_smtp_use_tls={{ postfix_smtp_use_tls | default("no") }}
+      - POSTFIX_smtp_tls_security_level={{ postfix_smtp_tls_security_level | default("") }}
+      - TZ={{ postfix_tz | default("") }}
+    restart: always
     logging: *default-logging
