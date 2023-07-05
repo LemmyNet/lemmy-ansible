@@ -57,7 +57,7 @@
             state: present
 
     - name: Configure Docker apt repo on Jammy++
-      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '24.04'
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04'
       block:
         - name: Download Docker GPG Key
           get_url:
