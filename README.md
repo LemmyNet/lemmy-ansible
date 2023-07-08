@@ -67,7 +67,7 @@ To run this ansible playbook, you need to:
 ## Upgrading
 
 - Run `git pull`
-- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last.
+- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/releases) to see if there are any config changes with the releases since your last.
 - Run `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ## Migrating your existing install to use this deploy
