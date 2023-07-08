@@ -15,7 +15,7 @@ services:
       # You could use port 80 if you won't use a reverse proxy
       - "{{ lemmy_port }}:8536"
     volumes:
-      - ./nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
+      - ./config/nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
     restart: always
     logging: *default-logging
     depends_on:
@@ -30,7 +30,7 @@ services:
     environment:
       - RUST_LOG="warn"
     volumes:
-      - ./lemmy.hjson:/config/config.hjson:Z
+      - ./config/lemmy.hjson:/config/config.hjson:Z
     depends_on:
       - postgres
       - pictrs
@@ -83,7 +83,7 @@ services:
       - POSTGRES_DB=lemmy
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
-      - ./customPostgresql.conf:/etc/postgresql.conf
+      - ./config/customPostgresql.conf:/etc/postgresql.conf
     restart: always
     logging: *default-logging
 

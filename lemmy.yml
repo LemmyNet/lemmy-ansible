@@ -113,13 +113,13 @@
             dest: "{{item.dest}}"
             mode: "{{item.mode}}"
           with_items:
-            - src: "templates/docker-compose.yml"
+            - src: "templates/nginx/docker-compose.yml"
               dest: "{{lemmy_base_dir}}/{{domain}}/docker-compose.yml"
               mode: "0600"
-            - src: "templates/nginx_internal.conf"
+            - src: "templates/nginx/nginx_internal.conf"
               dest: "{{lemmy_base_dir}}/{{domain}}/nginx_internal.conf"
               mode: "0644"
-            - src: "templates/nginx.conf"
+            - src: "templates/nginx/nginx.conf"
               dest: "/etc/nginx/sites-available/{{domain}}.conf"
               mode: "0644"
           vars:
