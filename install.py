@@ -20,17 +20,19 @@ def replace_text_in_file(filename, replacements):
             outfile.write(line)
 
 # Clean up previous run
-if os.path.exists('inventory') and os.path.exists('templates/docker_compose.yml'):
+if os.path.exists('inventory') or os.path.exists('templates/pictrs.yml'):
     cleanup = inquirer.confirm(message='Clean up previous run').execute()
 
     if cleanup:
         if os.path.exists('inventory'):
             shutil.rmtree('inventory')
-        if os.path.exists('templates/docker_compose.yml'):
-            os.remove('templates/docker_compose.yml')
-            shutil.copyfile('examples/docker_compose.yml', 'templates/docker_compose.yml')
+        if os.path.exists('templates/pictrs.yml'):
+            os.remove('templates/pictrs.yml')
+            shutil.copyfile('examples/pictrs.yml', 'templates/pictrs.yml')
     else:
         print('A clean run is recommended! Be sure to inspect the output files if you choose not to perform a clean run')
+else:
+    shutil.copyfile('examples/pictrs.yml', 'templates/pictrs.yml')
 
 domain = inquirer.text(
     message='Domain to deploy',
@@ -113,20 +115,11 @@ if object_storage:
         message = 'Object store secret key',
     ).execute()
 
-    # Quote the non parseable tokens
-    replace_text_in_file(
-        'templates/docker_compose.yml',
-        {
-            'image: {{ lemmy_docker_image }}': 'image: "{{ lemmy_docker_image }}"',
-            'image: {{ lemmy_docker_ui_image }}': 'image: "{{ lemmy_docker_ui_image }}"',
-        },
-    )
-
-    with open('templates/docker_compose.yml', 'r') as file:
-        docker_compose = yaml.safe_load(file)
+    with open('templates/pictrs.yml', 'r') as file:
+        pictrs = yaml.safe_load(file)
 
     # Add object store keys
-    docker_compose['services']['pictrs']['environment'] = docker_compose['services']['pictrs']['environment'] + [
+    pictrs['pictrs_env_vars'] = [
         'PICTRS__STORE__TYPE=object_storage',
         'PICTRS__STORE__ENDPOINT=' + PICTRS__STORE__ENDPOINT,
         'PICTRS__STORE__BUCKET_NAME=' + PICTRS__STORE__BUCKET_NAME,
@@ -136,17 +129,8 @@ if object_storage:
         'PICTRS__STORE__SECRET_KEY=' + PICTRS__STORE__SECRET_KEY,
     ]
 
-    with open('templates/docker_compose.yml', 'w') as file:
-        yaml.dump(docker_compose, file)
-
-    # Unquote the non parseable tokens
-    replace_text_in_file(
-        'templates/docker_compose.yml',
-        {
-            'image: "{{ lemmy_docker_image }}"': 'image: {{ lemmy_docker_image }}',
-            'image: "{{ lemmy_docker_ui_image }}"': 'image: {{ lemmy_docker_ui_image }}',
-        },
-    )
+    with open('templates/pictrs.yml', 'w') as file:
+        yaml.dump(pictrs, file)
 
 # Done!
 print('Done! You can now run the ansible playbook')
