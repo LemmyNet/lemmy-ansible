@@ -20,11 +20,17 @@ def replace_text_in_file(filename, replacements):
             outfile.write(line)
 
 # Clean up previous run
-if os.path.exists('inventory'):
-    shutil.rmtree('inventory')
-if os.path.exists('docker_compose.yml'):
-    os.remove('templates/docker_compose.yml')
-shutil.copyfile('examples/docker_compose.yml', 'templates/docker_compose.yml')
+if os.path.exists('inventory') and os.path.exists('templates/docker_compose.yml'):
+    cleanup = inquirer.confirm(message='Clean up previous run').execute()
+
+    if cleanup:
+        if os.path.exists('inventory'):
+            shutil.rmtree('inventory')
+        if os.path.exists('templates/docker_compose.yml'):
+            os.remove('templates/docker_compose.yml')
+            shutil.copyfile('examples/docker_compose.yml', 'templates/docker_compose.yml')
+    else:
+        print('A clean run is recommended! Be sure to inspect the output files if you choose not to perform a clean run')
 
 domain = inquirer.text(
     message='Domain to deploy',
