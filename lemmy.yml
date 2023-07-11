@@ -106,7 +106,7 @@
     - block:
         - set_fact:
             lemmy_port: "{{ 32767 |random(start=1024) }}"
-
+            pictrs_env_vars: "{{ lookup('file', 'templates/pictrs.yml') | from_yaml }}"
         - name: add template files
           template:
             src: "{{item.src}}"

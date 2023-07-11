@@ -65,7 +65,7 @@ services:
       - PICTRS__MEDIA__GIF__MAX_AREA=65536
       - PICTRS__MEDIA__GIF__MAX_FRAME_COUNT=400
       {% if pictrs_env_vars is defined and pictrs_env_vars|length > 0 %}
-      {{ pictrs_env_vars | to_yaml(indent=4) }}
+      {{ pictrs_env_vars | to_yaml(indent=2) }}
       {% endif %}
     user: 991:991
     volumes:
