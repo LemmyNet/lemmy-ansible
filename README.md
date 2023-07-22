@@ -15,67 +15,67 @@ To run this ansible playbook, you need to:
 
 ### 1. Clone this repo:
 
-   ```
-   git clone https://github.com/LemmyNet/lemmy-ansible.git
-   cd lemmy-ansible
-   ```
+```
+git clone https://github.com/LemmyNet/lemmy-ansible.git
+cd lemmy-ansible
+```
 
 ### 2. Make a directory to hold your config:
 
-   `mkdir -p inventory/host_vars/<your-domain>`
+`mkdir -p inventory/host_vars/<your-domain>`
 
 ### 3. Copy the sample configuration file:
 
-   `cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
+`cp examples/config.hjson inventory/host_vars/<your-domain>/config.hjson`
 
-   Edit that file and change the config to your liking. Note: **Do not edit anything inside the {{ }} braces.**
+Edit that file and change the config to your liking. Note: **Do not edit anything inside the {{ }} braces.**
 
-   [Here are all the config options.](https://join-lemmy.org/docs/en/administration/configuration.html#full-config-with-default-values)
+[Here are all the config options.](https://join-lemmy.org/docs/en/administration/configuration.html#full-config-with-default-values)
 
 ### 4. Copy the sample inventory hosts file:
 
-   `cp examples/hosts inventory/hosts`
+`cp examples/hosts inventory/hosts`
 
-   Edit the inventory hosts file (inventory/hosts) to your liking.
+Edit the inventory hosts file (inventory/hosts) to your liking.
 
 ### 5. Copy the sample postgresql.conf
 
-   `cp examples/customPostgresql.conf inventory/host_vars/<your-domain>/customPostgresql.conf`
+`cp examples/customPostgresql.conf inventory/host_vars/<your-domain>/customPostgresql.conf`
 
-   You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
+You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
 ### 6. (Optional) If you need advanced configurations, copy the sample additional_host_var.yml file:
 
-   You must copy it into `inventory/host_vars/` and rename it to the inventory
-   hostname set in `hosts` file. For example, if the inventory hostname is:
-    
-   `user@lemmy.example.com` 
-   
-   then the file must be named:
-   
-   `user@lemmy.example.com.yml`
-   
-   Remember the `.yml` extension!
-    
-   Links to additional documentation can be found in the file.
+You must copy it into `inventory/host_vars/` and rename it to the inventory
+hostname set in `hosts` file. For example, if the inventory hostname is:
+
+`user@lemmy.example.com`
+
+then the file must be named:
+
+`user@lemmy.example.com.yml`
+
+Remember the `.yml` extension!
+
+Links to additional documentation can be found in the file.
 
 ### 7. Run the playbook:
 
-   `ansible-playbook -i inventory/hosts lemmy.yml`
+`ansible-playbook -i inventory/hosts lemmy.yml`
 
-   _Note_: if you are not the root user or don't have password-less sudo, use this command:
+_Note_: if you are not the root user or don't have password-less sudo, use this command:
 
-   `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
+`ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
-   _Note_: if you haven't set up ssh keys[^1], and ssh using a password, use the command:
+_Note_: if you haven't set up ssh keys[^1], and ssh using a password, use the command:
 
-   `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
+`ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
 
-   [Full ansible command-line docs](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html)
+[Full ansible command-line docs](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html)
 
-   If the command above fails, you may need to comment out this line In the ansible.cfg file:
+If the command above fails, you may need to comment out this line In the ansible.cfg file:
 
-   `interpreter_python=/usr/bin/python3`
+`interpreter_python=/usr/bin/python3`
 
 [^1]: To create an ssh key pair with your host environment, you can follow the [instructions here](https://www.ssh.com/academy/ssh/keygen#copying-the-public-key-to-the-server), and then copy the key to your host server.
 
