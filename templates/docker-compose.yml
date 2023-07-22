@@ -93,6 +93,7 @@ services:
     environment:
       - POSTFIX_myhostname={{ domain }}
       - POSTFIX_inet_interfaces=0.0.0.0
+      - POSTFIX_inet_protocols={{ postfix_inet_protocols | default(ipv4) }}
       - POSTFIX_header_size_limit={{ postfix_header_size_limit | default(4096000) }}
       - POSTFIX_relayhost={{ postfix_relayhost | default("") }}
       - POSTFIX_smtp_sasl_auth_enable={{ postfix_smtp_sasl_auth_enable | default("no") }}
