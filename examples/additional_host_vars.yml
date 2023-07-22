@@ -12,8 +12,9 @@
 # user@lemmy.example.com.yml
 #
 # Remember the `.yml` extension!
+#
+# NOTE: You must quote all strings.
 ##############################################################################
-
 
 ##### Postfix Advanced Config
 # Values for these may be found in the Postfix documentation:
@@ -24,18 +25,22 @@
 #postfix_relayhost: '[smarthost.example.com]:587'
 
 ## Enable authentication to smarthost
-#postfix_smtp_sasl_auth_enable: yes
+## Note: this must be either "yes" or "no". It must be quoted!
+#postfix_smtp_sasl_auth_enable: "yes"
 
 ## Set username and password for authentication
 #postfix_smtp_sasl_password_maps: 'static:mailer@example.com:password'
 #postfix_smtp_sasl_security_options: noanonymous
 
 ## Turn on tls encryption -- this example enables STARTTLS
-#postfix_smtp_use_tls: yes
+## Note: this must be either "yes" or "no". It must be quoted!
+#postfix_smtp_use_tls: "yes"
+
+## Configure TLS
 #postfix_smtp_tls_security_level: may
 #postfix_header_size_limit: 4096000
 
-# Set correct timezone
-#postfix_tz: US/Eastern
+## Configure IP Protocol (perhaps you want ipv6)
+#postfix_inet_protocols: ipv4
 
 #####
