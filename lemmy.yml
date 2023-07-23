@@ -38,20 +38,36 @@
           - "apt-transport-https"
           - "ca-certificates"
           - "curl"
+          - "gnupg"
           - "software-properties-common"
           - "python3-pip"
           - "virtualenv"
           - "python3-setuptools"
 
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    - name: Configure Docker apt repo before Jammy
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
+      block:
+        - name: Add Docker GPG apt Key
+          apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+        - name: Add Docker Repository
+          apt_repository:
+            repo: deb https://download.docker.com/linux/ubuntu focal stable
+            state: present
 
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
+    - name: Configure Docker apt repo on Jammy++
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04'
+      block:
+        - name: Download Docker GPG Key
+          get_url:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            dest: /etc/apt/keyrings/docker.asc
+            checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+        - name: Add Docker to apt
+          apt_repository:
+            repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+            state: present
 
     - name: Update apt and install docker-ce
       apt:
