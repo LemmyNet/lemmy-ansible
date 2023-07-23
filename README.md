@@ -48,15 +48,15 @@ To run this ansible playbook, you need to:
 
    You must copy it into `inventory/host_vars/` and rename it to the inventory
    hostname set in `hosts` file. For example, if the inventory hostname is:
-   
+
    `user@lemmy.example.com`
-   
+
    then the file must be named:
-   
+
    `user@lemmy.example.com.yml`
-   
+
    Remember the `.yml` extension!
-   
+
    Links to additional documentation can be found in the file.
 
 7. Run the playbook:
