@@ -1,0 +1,34 @@
+---
+##############################################################################
+# This file contains advanced configurations for some services.
+#
+# You must copy it into `inventory/host_vars/` and rename it to the inventory
+# hostname set in `hosts` file.  For example, if the inventory hostname is:
+#
+# user@lemmy.example.com
+#
+# then the file must be named:
+#
+# user@lemmy.example.com.yml
+#
+# Remember the `.yml` extension!
+##############################################################################
+
+##### Pictrs Object Storage Config
+# Values for these may be found in the pict.rs documentation:
+# https://git.asonix.dog/asonix/pict-rs/src/branch/main#user-content-filesystem-to-object-storage-migration
+#####
+
+## Enable storage type
+#use_object_storage: yes
+
+## Configure Object Storage
+#pictrs_store_endpoint: https://object-storage-endpoint
+#pictrs_store_bucket: bucket-name
+#pictrs_store_region: region
+## Don't quote this
+#pictrs_store_use_path_style: no
+#pictrs_store_access_key: access-key
+#pictrs_store_secret_key: secret-key
+
+#####

@@ -64,6 +64,16 @@ services:
       - PICTRS__MEDIA__GIF__MAX_HEIGHT=256
       - PICTRS__MEDIA__GIF__MAX_AREA=65536
       - PICTRS__MEDIA__GIF__MAX_FRAME_COUNT=400
+{% if use_object_storage %}
+      - PICTRS__STORE__TYPE=object_storage
+      - PICTRS__STORE__ENDPOINT={{ pictrs_store_endpoint }}
+      - PICTRS__STORE__BUCKET_NAME={{ pictrs_store_bucket }}
+      - PICTRS__STORE__REGION=region={{ pictrs_store_region }}
+      - PICTRS__STORE__USE_PATH_STYLE={{ pictrs_store_use_path_style | lower }}
+      - PICTRS__STORE__ACCESS_KEY={{ pictrs_store_access_key }}
+      - PICTRS__STORE__SECRET_KEY={{ pictrs_store_secret_key }}
+{% endif %}
+
     user: 991:991
     volumes:
       - ./volumes/pictrs:/mnt:Z
