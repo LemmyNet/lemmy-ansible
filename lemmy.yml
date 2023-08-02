@@ -61,7 +61,7 @@
     # note that Debian and Ubuntu use the same key
     - name: Configure Docker apt repo for Debian or Ubuntu >= 22.04
       when: (ansible_distribution == 'Debian') or
-            (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       block:
         - name: Download Docker GPG Key
           get_url:
