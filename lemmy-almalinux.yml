@@ -21,6 +21,8 @@
       when:
         - ansible_distribution not in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
         - ansible_distribution_major_version | int < 9
+      tags:
+        - always
 
     - name: Enable CRB repository
       ansible.builtin.yum_repository:
