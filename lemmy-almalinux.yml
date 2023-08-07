@@ -57,12 +57,6 @@
       tags:
         - firewalld
 
-    - name: Debug services facts
-      ansible.builtin.debug:
-        msg: "{{ ansible_facts.services }}"
-      tags:
-        - firewalld
-
     # TODO: Use ansible.posix.firewalld
     - name: Allow http/httpd traffic to public zone in firewalld
       ansible.builtin.command: "firewall-cmd --zone=public --add-service={{ item }} --perm"
