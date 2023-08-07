@@ -8,7 +8,7 @@
       ansible.builtin.fail:
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
-  handlers: 
+  handlers:
     - name: reload nginx
       ansible.builtin.command: nginx -s reload
   vars:
@@ -57,7 +57,7 @@
       tags:
         - firewalld
 
-    - name: Debug services facts 
+    - name: Debug services facts
       ansible.builtin.debug:
         msg: "{{ ansible_facts.services }}"
       tags:
@@ -166,7 +166,7 @@
       notify: reload nginx
       tags:
         - nginx
-  
+
     # TODO: Check if this is necessary with EL & podman
     #- name: Copy docker config
     #  ansible.builtin.copy:
@@ -176,7 +176,7 @@
 
     # TODO: podman-compose should wrap this safely
     # TODO: This was an incorrect assumption, module uses docker python module, not cli
-    #- name: Run podman-compose 
+    #- name: Run podman-compose
     #  docker_compose:
     #    project_src: "{{ lemmy_base_dir }}/{{ domain }}"
     #    state: present
@@ -187,7 +187,7 @@
     #    - docker_compose
     #    - podman
     #    - podman_compose
-   
+
     - name: Start and enable podman service
       ansible.builtin.systemd:
         name: podman.service
@@ -231,4 +231,3 @@
       tags:
         - certbot
         - ssl
-
