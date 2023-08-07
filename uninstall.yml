@@ -10,6 +10,14 @@
       prompt: "Delete certificates? Select 'no' if you want to reinstall Lemmy [yes/no]"
       private: no
 
+    - name: stop_disable_nginx
+      prompt: "Do you want to stop/disable nginx? [yes/no]"
+      private: no
+
+    - name: stop_disable_docker_podman
+      prompt: "Do you want to stop/disable Docker/podman? [yes/no]"
+      private: no
+
   tasks:
     - name: end play if no confirmation was given
       debug:
@@ -38,6 +46,13 @@
           cron:
             name: certbot-renew-lemmy
             state: absent
+
+        - name: Stop and disable Docker
+          ansible.builtin.systemd:
+            name: docker.service
+            state: stopped
+            enabled: no
+          when: stop_disable_docker_podman|bool
       when: ansible_distribution == "Ubuntu"
 
     # EL specific uninstallation steps
@@ -60,4 +75,18 @@
             name: certbot-renew.timer
             state: stopped
             enabled: no
+
+        - name: Stop and disable podman
+          ansible.builtin.systemd:
+            name: podman.service
+            state: stopped
+            enabled: no
+          when: stop_disable_docker_podman|bool
       when: ansible_distribution in ['AlmaLinux', 'RedHat', 'Rocky']
+
+    - name: Stop and disable nginx
+      ansible.builtin.systemd:
+        name: nginx.service
+        state: stopped
+        enabled: no
+      when: stop_disable_nginx|bool
