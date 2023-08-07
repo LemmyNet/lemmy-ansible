@@ -19,20 +19,45 @@
     - meta: end_play
       when: not confirm_uninstall|bool
 
-    - name: stop docker-compose
-      docker_compose:
-        project_src: "{{lemmy_base_dir}}/{{domain}}"
-        state: absent
+    # Ubuntu specific uninstallation steps
+    - block:
+       - name: stop docker-compose
+         docker_compose:
+           project_src: "{{lemmy_base_dir}}/{{domain}}"
+           state: absent
 
-    - name: delete data
-      file:
-        path: "{{item.path}}"
-        state: absent
-      with_items:
-        - path: "{{lemmy_base_dir}}/{{domain}}"
-        - path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+       - name: delete data
+         file:
+           path: "{{item.path}}"
+           state: absent
+         with_items:
+           - path: "{{lemmy_base_dir}}/{{domain}}"
+           - path: "/etc/nginx/sites-enabled/{{domain}}.conf"
 
-    - name: remove certbot cronjob
-      cron:
-        name: certbot-renew-lemmy
-        state: absent
+       - name: remove certbot cronjob
+         cron:
+           name: certbot-renew-lemmy
+           state: absent
+      when: ansible_distribution == "Ubuntu"
+
+    # EL specific uninstallation steps
+    - block:
+      - name: Stop and remove containers
+        ansible.builtin.command: podman-compose down
+        args:
+          chdir: "{{ lemmy_base_dir }}/{{ domain }}"
+
+      - name: Delete Lemmy data
+        ansible.builtin.file:
+          path: "{{ item.path }}"
+          state: absent
+        loop:
+          - path: "{{lemmy_base_dir}}/{{ domain }}"
+          - path: "/etc/nginx/conf.d/{{ domain }}.conf"
+
+      - name: Stop and disable certbot-renew.timer
+        ansible.builtin.systemd:
+          name: certbot-renew.timer
+          state: stopped
+          enabled: no
+      when: ansible_distribution in ['AlmaLinux', 'RedHat', 'Rocky']

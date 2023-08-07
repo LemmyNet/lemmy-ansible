@@ -8,4 +8,5 @@ pipeline:
     commands:
       - apk add ansible
       - ansible-playbook lemmy.yml --syntax-check
+      - ansible-playbook lemmy-almalinux.yml --syntax-check
       - ansible-playbook uninstall.yml --syntax-check
