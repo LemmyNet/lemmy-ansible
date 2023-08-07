@@ -15,6 +15,13 @@
     postgres_password: very-fantastic-password-aint-it?
     lemmy_port: "{{ 32767 | random(start=1024) }}"
   tasks:
+    - name: Ensure target system is >= EL9
+      ansible.builtin.fail:
+        msg: "This playbook requires Enterprise Linux 9 or greater"
+      when:
+        - ansible_distribution not in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
+        - ansible_distribution_major_version | int < 9
+
     - name: Enable CRB repository
       ansible.builtin.yum_repository:
         name: almalinux-crb

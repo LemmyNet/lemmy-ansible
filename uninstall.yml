@@ -82,7 +82,9 @@
             state: stopped
             enabled: no
           when: stop_disable_docker_podman|bool
-      when: ansible_distribution in ['AlmaLinux', 'RedHat', 'Rocky']
+      when:
+        - ansible_distribution in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
+        - ansible_distribution_major_version | int >= 9
 
     - name: Stop and disable nginx
       ansible.builtin.systemd:
