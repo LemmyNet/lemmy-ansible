@@ -44,7 +44,13 @@ To run this ansible playbook, you need to:
 
    You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
-6. Run the playbook:
+6. **Optional**: If you want to configure the pict-rs instance via environmental variables (EX, to configure it to use Amazon S3 for storage), copy the sample `pictrs.yml` file into your `host_vars/<your-domain>/pictrs.yml`:
+
+   `cp examples/pictrs.yml inventory/host_vars/<your-domain>/pictrs.yml`
+
+   Edit the `inventory_host_vars/<your-domain>/pictrs.yml` file to your liking.
+
+7. Run the playbook:
 
    `ansible-playbook -i inventory/hosts lemmy.yml`
 
