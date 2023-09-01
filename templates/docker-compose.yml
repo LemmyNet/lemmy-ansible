@@ -64,6 +64,13 @@ services:
       - PICTRS__MEDIA__GIF__MAX_HEIGHT=256
       - PICTRS__MEDIA__GIF__MAX_AREA=65536
       - PICTRS__MEDIA__GIF__MAX_FRAME_COUNT=400
+{% if pictrs_env_vars is defined and pictrs_env_vars|length > 0 %}
+{%- for item in pictrs_env_vars %}
+{%- for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor -%}
+{% endfor %}
+{% endif %}
     user: 991:991
     volumes:
       - ./volumes/pictrs:/mnt:Z
