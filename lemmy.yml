@@ -80,7 +80,7 @@
             repo: "deb [arch={{ dpkg_output.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
             state: present
 
-    - name: Install Docker and docker-compose
+    - name: Install docker-ce and docker-compose
       apt:
         name:
           - docker-ce
