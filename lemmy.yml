@@ -166,9 +166,6 @@
             owner: "1000"
             group: "1000"
 
-      vars:
-        postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres chars=ascii_letters,digits') }}"
-
     - name: enable and start docker service
       systemd:
         name: docker

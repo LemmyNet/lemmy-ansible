@@ -13,7 +13,6 @@
       ansible.builtin.command: nginx -s reload
   vars:
     lemmy_port: "{{ 32767 | random(start=1024) }}"
-    postgres_password: "{{ lookup('password', 'host_vars/{{ domain }}/passwords/postgres chars=ascii_letters,digits') }}"
   tasks:
     - name: Ensure target system is >= EL9
       ansible.builtin.fail:
