@@ -8,7 +8,7 @@ x-logging: &default-logging
 
 services:
   proxy:
-    image: nginx:1-alpine
+    image: docker.io/library/nginx 
     ports:
       # actual and only port facing any connection from outside
       # Note, change the left number if port 1236 is already in use on your system
@@ -49,7 +49,7 @@ services:
     logging: *default-logging
 
   pictrs:
-    image: asonix/pictrs:0.4.0
+    image: docker.io/asonix/pictrs:0.4.0
     # this needs to match the pictrs url in lemmy.hjson
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
@@ -75,7 +75,7 @@ services:
           memory: 690m
 
   postgres:
-    image: postgres:15-alpine
+    image: docker.io/postgres:15-alpine
     hostname: postgres
     environment:
       - POSTGRES_USER=lemmy
@@ -88,7 +88,7 @@ services:
     logging: *default-logging
 
   postfix:
-    image: mwader/postfix-relay
+    image: docker.io/mwader/postfix-relay
     environment:
       - POSTFIX_myhostname={{ domain }}
     restart: "always"

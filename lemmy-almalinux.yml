@@ -1,0 +1,236 @@
+---
+- hosts: all
+  gather_facts: true
+  pre_tasks:
+    # This is not needed for this playbook as it predates its existence
+    # But we're keeping it for funsies :)
+    - name: check lemmy_base_dir
+      ansible.builtin.fail:
+        msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
+      when: lemmy_base_dir is not defined
+  handlers:
+    - name: reload nginx
+      ansible.builtin.command: nginx -s reload
+  vars:
+    lemmy_port: "{{ 32767 | random(start=1024) }}"
+    postgres_password: "{{ lookup('password', 'host_vars/{{ domain }}/passwords/postgres chars=ascii_letters,digits') }}"
+  tasks:
+    - name: Ensure target system is >= EL9
+      ansible.builtin.fail:
+        msg: "This playbook requires Enterprise Linux 9 or greater"
+      when:
+        - ansible_distribution not in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
+        - ansible_distribution_major_version | int < 9
+      tags:
+        - always
+
+    - name: Enable CRB repository
+      ansible.builtin.yum_repository:
+        name: almalinux-crb
+        description: AlmaLinux $releasever - CRB
+        mirrorlist: https://mirrors.almalinux.org/mirrorlist/$releasever/crb
+        gpgcheck: true
+        gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux-9
+        enabled: yes
+      tags:
+        - dependencies
+
+    - name: Install epel-release
+      ansible.builtin.dnf:
+        state: present
+        name: epel-release
+      tags:
+        - dependencies
+
+    - name: Install dependencies
+      ansible.builtin.dnf:
+        state: present
+        name:
+          - certbot
+          - curl
+          - nginx
+          - podman
+          - podman-compose
+          - podman-docker
+          - python3-certbot-nginx
+          - python3-docker
+          - python3-pip
+          - python3-podman
+          - python3-virtualenv
+          - python3-setuptools
+      tags:
+        - dependencies
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+      tags:
+        - firewalld
+
+    # TODO: Use ansible.posix.firewalld
+    - name: Allow http/httpd traffic to public zone in firewalld
+      ansible.builtin.command: "firewall-cmd --zone=public --add-service={{ item }} --perm"
+      loop:
+        - http
+        - https
+      when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
+      tags:
+        - firewalld
+
+    - name: Reload firewalld
+      ansible.builtin.command: firewall-cmd --reload
+      when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
+      tags:
+        - firewalld
+
+    # TODO: certbot logic needs to be re-worked
+    - name: Request initial letsencrypt certificate
+      ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
+      args:
+        creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
+      tags:
+        - certbot
+        - certbot_initial
+        - ssl
+
+    - name: Create lemmy folder
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        state: directory
+      loop:
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/"
+          owner: "root"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
+          owner: "root"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
+          owner: "991" # Matches docker-compose UID in docker-compose.yml
+
+    - name: Set lemmy_port fact
+      ansible.builtin.set_fact:
+        lemmy_port: "{{ 32767 |random(start=1024) }}"
+      tags:
+        - always
+
+    - name: Distribute docker/podman templates
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - src: "templates/docker-compose.yml"
+          dest: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
+          mode: "0600"
+        - src: "templates/nginx_internal.conf"
+          dest: "{{ lemmy_base_dir }}/{{ domain }}/nginx_internal.conf"
+          mode: "0644"
+      vars:
+        lemmy_docker_image: "docker.io/dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
+        lemmy_docker_ui_image: "docker.io/dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
+      tags:
+        - docker
+        - podman
+
+    # TODO: Move to templates/, keeping consistent with upstream currently
+    # to ensure documentation is accurate
+    - name: Add the config.hjson
+      ansible.builtin.template:
+        #src: "templates/{{ domain }}/config.hjson"
+        src: "host_vars/{{ domain }}/config.hjson"
+        dest: "{{ lemmy_base_dir }}/{{ domain }}/lemmy.hjson"
+        mode: "0600"
+        owner: "1000" # Match UID in container
+        group: "1000" # Match GID in container
+      tags:
+        - configs
+
+    # TODO: Move to files/, keeping consistent with upstream currently
+    # to ensure documentation is accurate
+    - name: Add the customPostgresql.conf
+      ansible.builtin.template:
+        #src: "files/{{ domain }}/customPostgresql.conf"
+        src: "host_vars/{{ domain }}/customPostgresql.conf"
+        dest: "{{ lemmy_base_dir }}/{{ domain }}/customPostgresql.conf"
+        mode: "0600"
+        owner: "1000" # Match UID in container
+        group: "1000" # Match GID in container
+      tags:
+        - configs
+        - postgresql
+
+    - name: Distribute nginx site templates
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - src: "templates/nginx.conf"
+          dest: "/etc/nginx/conf.d/{{ domain }}.conf"
+          mode: "0644"
+      notify: reload nginx
+      tags:
+        - nginx
+
+    # TODO: Check if this is necessary with EL & podman
+    #- name: Copy docker config
+    #  ansible.builtin.copy:
+    #    src: "{{ ansible_playbook }}/files/docker-daemon.json"
+    #    dest: /etc/docker/daemon.json
+    #    mode: '0644'
+
+    # TODO: podman-compose should wrap this safely
+    # TODO: This was an incorrect assumption, module uses docker python module, not cli
+    #- name: Run podman-compose
+    #  docker_compose:
+    #    project_src: "{{ lemmy_base_dir }}/{{ domain }}"
+    #    state: present
+    #    pull: yes
+    #    remove_orphans: yes
+    #  tags:
+    #    - docker
+    #    - docker_compose
+    #    - podman
+    #    - podman_compose
+
+    - name: Start and enable podman service
+      ansible.builtin.systemd:
+        name: podman.service
+        state: started
+        enabled: yes
+      tags:
+        - docker
+        - podman
+
+    - name: Run podman-compose pull
+      ansible.builtin.command: podman-compose pull
+      args:
+        chdir: "{{ lemmy_base_dir }}/{{ domain }}"
+      tags:
+        - docker
+        - podman
+
+    - name: Run podman-compose up
+      ansible.builtin.command: podman-compose up -d
+      args:
+        chdir: "{{ lemmy_base_dir }}/{{ domain }}"
+      tags:
+        - docker
+        - podman
+
+    # This isn't using any jinja2 templating currently
+    - name: Distribute /etc/sysconfig/certbot
+      ansible.builtin.template:
+        src: "templates/sysconfig-certbot.j2"
+        dest: "/etc/sysconfig/certbot"
+        mode: "0644"
+      tags:
+        - certbot
+        - ssl
+
+    - name: Enable certbot-renew.timer
+      ansible.builtin.systemd:
+        name: certbot-renew.timer
+        state: started
+        enabled: yes
+      tags:
+        - certbot
+        - ssl
