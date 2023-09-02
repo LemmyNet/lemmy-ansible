@@ -80,18 +80,13 @@
             repo: "deb [arch={{ dpkg_output.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
             state: present
 
-    - name: Update apt and install docker-ce
+    - name: Install docker-ce and docker-compose
       apt:
-        name: docker-ce
-        state: latest
-        update_cache: true
-
-    - name: Install Docker Module and docker-compose for Python
-      pip:
         name:
-          - docker
+          - docker-ce
           - docker-compose
         state: latest
+        update_cache: true
 
     - name: copy docker config
       copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
