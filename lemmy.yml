@@ -10,9 +10,9 @@
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
 
-    - name: install python for Ansible
+    - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python3-minimal python3-setuptools)
+      raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
       args:
         executable: /bin/bash
       register: output
@@ -56,6 +56,13 @@
             repo: deb https://download.docker.com/linux/ubuntu focal stable
             state: present
 
+    - name: Get architecture using dpkg
+      when: (ansible_distribution == 'Debian') or
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
+      command: dpkg --print-architecture
+      register: dpkg_output
+      changed_when: false
+
     # based on https://docs.docker.com/engine/install/debian/
     # and https://docs.docker.com/engine/install/ubuntu/
     # note that Debian and Ubuntu use the same key
@@ -66,25 +73,20 @@
         - name: Download Docker GPG Key
           get_url:
             url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-            dest: /etc/apt/keyrings/docker.asc
+            dest: /etc/apt/trusted.gpg.d/docker.asc
             checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
         - name: Add Docker apt repo
           apt_repository:
-            repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+            repo: "deb [arch={{ dpkg_output.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
             state: present
 
-    - name: Update apt and install docker-ce
+    - name: Install docker-ce and docker-compose
       apt:
-        name: docker-ce
-        state: latest
-        update_cache: true
-
-    - name: Install Docker Module and docker-compose for Python
-      pip:
         name:
-          - docker
+          - docker-ce
           - docker-compose
         state: latest
+        update_cache: true
 
     - name: copy docker config
       copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'

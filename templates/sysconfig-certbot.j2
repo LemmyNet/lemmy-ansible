@@ -1,0 +1,47 @@
+## NOTE ##
+# If a hook is set here then it will be used for all
+# certificates and will override any per certificate
+# hook configuration in place.
+
+# Command to be run in a shell before obtaining any
+# certificates. Intended primarily for renewal, where it
+# can be used to temporarily shut down a webserver that
+# might conflict with the standalone plugin. This will
+# only be called if a certificate is actually to be
+# obtained/renewed. When renewing several certificates
+# that have identical pre-hooks, only the first will be
+# executed.
+#
+# An example to stop the MTA before updating certs would be
+# PRE_HOOK="--pre-hook 'systemctl stop postfix'"
+PRE_HOOK=""
+
+# Command to be run in a shell after attempting to
+# obtain/renew certificates. Can be used to deploy
+# renewed certificates, or to restart any servers that
+# were stopped by --pre-hook. This is only run if an
+# attempt was made to obtain/renew a certificate. If
+# multiple renewed certificates have identical post-
+# hooks, only one will be run.
+#
+# An example to restart httpd would be:
+# POST_HOOK="--post-hook 'systemctl restart httpd'"
+POST_HOOK="'nginx -s reload'"
+
+# Command to be run in a shell once for each
+# successfully renewed certificate. For this command,
+# the shell variable $RENEWED_LINEAGE will point to the
+# config live subdirectory containing the new certs and
+# keys; the shell variable $RENEWED_DOMAINS will contain
+# a space-delimited list of renewed cert domains
+#
+# An example to run a script to alert each cert would be:
+# DEPLOY_HOOK="--deploy-hook /usr/local/bin/cert-notifier.sh"
+DEPLOY_HOOK=""
+
+# Any other misc arguments for the renewal
+# See certbot -h renew for full list
+#
+# An example to force renewal for certificates not due yet
+# CERTBOT_ARGS="--force-renewal"
+CERTBOT_ARGS=""
