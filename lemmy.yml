@@ -10,9 +10,9 @@
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
 
-    - name: install python for Ansible
+    - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python3-minimal python3-setuptools)
+      raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
       args:
         executable: /bin/bash
       register: output
