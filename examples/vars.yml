@@ -3,7 +3,7 @@ postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwo
 # You can set any pict-rs environmental variables here. They will populate the templates/docker-compose.yml file.
 # https://git.asonix.dog/asonix/pict-rs
 pictrs_env_vars:
-  - PICTRS__SERVER__API_KEY: {{ postgres_password }}
+  - PICTRS__SERVER__API_KEY: "{{ postgres_password }}"
   - PICTRS__MEDIA__VIDEO_CODEC: vp9
   - PICTRS__MEDIA__GIF__MAX_WIDTH: 256
   - PICTRS__MEDIA__GIF__MAX_HEIGHT: 256
