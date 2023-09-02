@@ -157,6 +157,16 @@
         - configs
         - postgresql
 
+    - name: Distribute nginx proxy_params configuration
+      ansible.builtin.copy:
+        src: files/proxy_params
+        dest: "{{ lemmy_base_dir }}/{{ domain }}/proxy_params"
+        owner: root
+        group: root
+        mode: "0644"
+      tags:
+        - nginx
+
     - name: Distribute nginx site templates
       ansible.builtin.template:
         src: "{{ item.src }}"

@@ -16,6 +16,7 @@ services:
       - "{{ lemmy_port }}:8536"
     volumes:
       - ./nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
+      - ./proxy_params:/etc/nginx/proxy_params:ro,Z
     restart: always
     logging: *default-logging
     depends_on:
