@@ -13,7 +13,7 @@
       ansible.builtin.command: nginx -s reload
   vars:
     lemmy_port: "{{ 32767 | random(start=1024) }}"
-    postgres_password: "{{ lookup('password', 'host_vars/{{ domain }}/passwords/postgres chars=ascii_letters,digits') }}"
+    postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres chars=ascii_letters,digits') }}"
   tasks:
     - name: Ensure target system is >= EL9
       ansible.builtin.fail:
@@ -135,7 +135,7 @@
     - name: Add the config.hjson
       ansible.builtin.template:
         #src: "templates/{{ domain }}/config.hjson"
-        src: "host_vars/{{ domain }}/config.hjson"
+        src: "inventory/host_vars/{{ domain }}/config.hjson"
         dest: "{{ lemmy_base_dir }}/{{ domain }}/lemmy.hjson"
         mode: "0600"
         owner: "1000" # Match UID in container
@@ -148,7 +148,7 @@
     - name: Add the customPostgresql.conf
       ansible.builtin.template:
         #src: "files/{{ domain }}/customPostgresql.conf"
-        src: "host_vars/{{ domain }}/customPostgresql.conf"
+        src: "inventory/host_vars/{{ domain }}/customPostgresql.conf"
         dest: "{{ lemmy_base_dir }}/{{ domain }}/customPostgresql.conf"
         mode: "0600"
         owner: "1000" # Match UID in container
