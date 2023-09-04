@@ -56,10 +56,10 @@ services:
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
     environment:
 {% if pictrs_env_vars is defined and pictrs_env_vars|length > 0 %}
-{%- for item in pictrs_env_vars %}
-{%- for key, value in item.items() %}
+{% for item in pictrs_env_vars %}
+{% for key, value in item.items() %}
       - {{ key }}={{ value }}
-{% endfor -%}
+{% endfor %}
 {% endfor %}
 {% endif %}
     user: 991:991
