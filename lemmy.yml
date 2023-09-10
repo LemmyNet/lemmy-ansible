@@ -1,35 +1,37 @@
 ---
-- hosts: all
+- name: Install Lemmy
+  hosts: all
 
   # Install python if required
   # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
-  gather_facts: False
+  gather_facts: false
   pre_tasks:
-    - name: check lemmy_base_dir
-      fail:
+    - name: Check lemmy_base_dir
+      ansible.builtin.fail:
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
 
     - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
-      raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
+      ansible.builtin.raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
       args:
         executable: /bin/bash
       register: output
       changed_when: output.stdout != ''
 
-    - setup: # gather facts
+    - name: Gather facts
+      ansible.builtin.setup:
 
   tasks:
     - name: Install aptitude
-      apt:
+      ansible.builtin.apt:
         name: aptitude
-        state: latest
+        state: present
         update_cache: true
 
-    - name: install dependencies
-      apt:
-        state: latest
+    - name: Install dependencies
+      ansible.builtin.apt:
+        state: present
         update_cache: true
         pkg:
           - "nginx"
@@ -48,18 +50,18 @@
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
       block:
         - name: Add Docker GPG apt Key
-          apt_key:
+          ansible.builtin.apt_key:
             url: https://download.docker.com/linux/ubuntu/gpg
             state: present
         - name: Add Docker Repository
-          apt_repository:
+          ansible.builtin.apt_repository:
             repo: deb https://download.docker.com/linux/ubuntu focal stable
             state: present
 
     - name: Get architecture using dpkg
       when: (ansible_distribution == 'Debian') or
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
-      command: dpkg --print-architecture
+      ansible.builtin.command: dpkg --print-architecture
       register: dpkg_output
       changed_when: false
 
@@ -71,47 +73,56 @@
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       block:
         - name: Download Docker GPG Key
-          get_url:
+          ansible.builtin.get_url:
             url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
             dest: /etc/apt/trusted.gpg.d/docker.asc
             checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+            mode: "0644"
         - name: Add Docker apt repo
-          apt_repository:
-            repo: "deb [arch={{ dpkg_output.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+          ansible.builtin.apt_repository:
+            repo: >-
+              deb [arch={{ dpkg_output.stdout }} signed-by=/etc/apt/trusted.gpg.d/docker.asc]
+              https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
             state: present
 
     - name: Install docker-ce and docker-compose
-      apt:
+      ansible.builtin.apt:
         name:
           - docker-ce
           - docker-compose
-        state: latest
+        state: present
         update_cache: true
 
-    - name: copy docker config
-      copy: src='../files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
+    - name: Copy docker config
+      ansible.builtin.copy:
+        src: ../files/docker-daemon.json # noqa: no-relative-paths
+        dest: /etc/docker/daemon.json
+        mode: "0644"
 
-    - name: request initial letsencrypt certificate
-      command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
+    - name: Request initial letsencrypt certificate
+      ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
       args:
-        creates: "/etc/letsencrypt/live/{{domain}}/privkey.pem"
+        creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
 
-    - name: create lemmy folder
-      file:
-        path: "{{item.path}}"
-        owner: "{{item.owner}}"
+    - name: Create lemmy folder
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
         state: directory
+        mode: "0755"
       with_items:
-        - path: "{{lemmy_base_dir}}/{{domain}}/"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/"
           owner: "root"
-        - path: "{{lemmy_base_dir}}/{{domain}}/volumes/"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
           owner: "root"
-        - path: "{{lemmy_base_dir}}/{{domain}}/volumes/pictrs/"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
           owner: "991"
 
-    - block:
-        - set_fact:
-            lemmy_port: "{{ 32767 |random(start=1024) }}"
+    - name: Deploy configuration files
+      block:
+        - name: Generate random port for lemmy service
+          ansible.builtin.set_fact:
+            lemmy_port: "{{ 32767 | random(start=1024) }}"
 
         - name: Distribute nginx proxy_params configuration
           ansible.builtin.copy:
@@ -121,63 +132,64 @@
             group: root
             mode: "0644"
 
-        - name: add template files
-          template:
-            src: "{{item.src}}"
-            dest: "{{item.dest}}"
-            mode: "{{item.mode}}"
+        - name: Add template files
+          ansible.builtin.template:
+            src: "{{ item.src }}"
+            dest: "{{ item.dest }}"
+            mode: "{{ item.mode }}"
           with_items:
             - src: "templates/docker-compose.yml"
-              dest: "{{lemmy_base_dir}}/{{domain}}/docker-compose.yml"
+              dest: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
               mode: "0600"
             - src: "templates/nginx_internal.conf"
-              dest: "{{lemmy_base_dir}}/{{domain}}/nginx_internal.conf"
+              dest: "{{ lemmy_base_dir }}/{{ domain }}/nginx_internal.conf"
               mode: "0644"
             - src: "templates/nginx.conf"
-              dest: "/etc/nginx/sites-available/{{domain}}.conf"
+              dest: "/etc/nginx/sites-available/{{ domain }}.conf"
               mode: "0644"
           vars:
-            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default( lookup('file', 'VERSION') )}}"
-            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION')))}}"
+            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(lookup('file', 'VERSION')) }}"
+            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION'))) }}"
 
-        - block:
-            - name: gather stats on site enabled config
-              stat:
-                path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+        - name: Set up nginx sites-enabled symlink
+          block:
+            - name: Gather stats on site enabled config
+              ansible.builtin.stat:
+                path: "/etc/nginx/sites-enabled/{{ domain }}.conf"
               register: reg_enabled
 
-            - name: remove if regular file (legacy) instead of symlink
-              file:
-                path: "/etc/nginx/sites-enabled/{{domain}}.conf"
+            - name: Remove if regular file (legacy) instead of symlink
+              ansible.builtin.file:
+                path: "/etc/nginx/sites-enabled/{{ domain }}.conf"
                 state: absent
               when: reg_enabled.stat.exists and reg_enabled.stat.isreg
 
-            - name: enable nginx site
-              file:
-                src: "../sites-available/{{domain}}.conf"
-                dest: "/etc/nginx/sites-enabled/{{domain}}.conf"
+            - name: Enable nginx site
+              ansible.builtin.file:
+                src: "../sites-available/{{ domain }}.conf"
+                dest: "/etc/nginx/sites-enabled/{{ domain }}.conf"
                 state: link
 
-        - name: add the config.hjson
-          template:
-            src: "inventory/host_vars/{{domain}}/config.hjson"
-            dest: "{{lemmy_base_dir}}/{{domain}}/lemmy.hjson"
+        - name: Add the config.hjson
+          ansible.builtin.template:
+            src: "inventory/host_vars/{{ domain }}/config.hjson"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/lemmy.hjson"
             mode: "0600"
             owner: "1000"
             group: "1000"
 
-        - name: add the customPostgresql.conf
-          template:
-            src: "inventory/host_vars/{{domain}}/customPostgresql.conf"
-            dest: "{{lemmy_base_dir}}/{{domain}}/customPostgresql.conf"
+        - name: Add the customPostgresql.conf
+          ansible.builtin.template:
+            src: "inventory/host_vars/{{ domain }}/customPostgresql.conf"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/customPostgresql.conf"
             mode: "0600"
             owner: "1000"
             group: "1000"
 
-    - name: enable and start docker service
-      systemd:
+    - name: Enable and start docker service
+      ansible.builtin.systemd:
         name: docker
-        enabled: yes
+        enabled: true
         state: started
 
     # - name: Change the working directory to /opt
@@ -187,18 +199,19 @@
     #     register: shell_output
     # - debug: var=shell_output
 
-    - name: start docker-compose
-      docker_compose:
-        project_src: "{{lemmy_base_dir}}/{{domain}}"
+    - name: Start docker-compose
+      community.docker.docker_compose:
+        project_src: "{{ lemmy_base_dir }}/{{ domain }}"
         state: present
-        pull: yes
-        remove_orphans: yes
+        pull: true
+        remove_orphans: true
 
-    - name: reload nginx with new config
-      shell: nginx -s reload
+    - name: Reload nginx with new config
+      ansible.builtin.command: nginx -s reload
+      changed_when: true
 
-    - name: certbot renewal cronjob
-      cron:
+    - name: Certbot renewal cronjob
+      ansible.builtin.cron:
         special_time: daily
         name: certbot-renew-lemmy
         user: root
