@@ -29,7 +29,13 @@ services:
     restart: always
     logging: *default-logging
     environment:
-      - RUST_LOG="warn"
+{% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
+{% for item in lemmy_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
     volumes:
       - ./lemmy.hjson:/config/config.hjson:Z
     depends_on:
@@ -39,9 +45,13 @@ services:
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
     environment:
-      - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
-      - LEMMY_UI_LEMMY_EXTERNAL_HOST={{ domain }}
-      - LEMMY_UI_HTTPS=true
+{% if lemmyui_env_vars is defined and lemmyui_env_vars|length > 0 %}
+{% for item in lemmyui_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
     volumes:
       - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
     depends_on:
@@ -56,15 +66,13 @@ services:
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
     environment:
-      - PICTRS_OPENTELEMETRY_URL=http://otel:4137
-      - PICTRS__SERVER__API_KEY={{ postgres_password }}
-      - RUST_LOG=debug
-      - RUST_BACKTRACE=full
-      - PICTRS__MEDIA__VIDEO_CODEC=vp9
-      - PICTRS__MEDIA__GIF__MAX_WIDTH=256
-      - PICTRS__MEDIA__GIF__MAX_HEIGHT=256
-      - PICTRS__MEDIA__GIF__MAX_AREA=65536
-      - PICTRS__MEDIA__GIF__MAX_FRAME_COUNT=400
+{% if pictrs_env_vars is defined and pictrs_env_vars|length > 0 %}
+{% for item in pictrs_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
     user: 991:991
     volumes:
       - ./volumes/pictrs:/mnt:Z
@@ -79,9 +87,13 @@ services:
     image: docker.io/postgres:15-alpine
     hostname: postgres
     environment:
-      - POSTGRES_USER=lemmy
-      - POSTGRES_PASSWORD={{ postgres_password }}
-      - POSTGRES_DB=lemmy
+{% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
+{% for item in postgres_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
       - ./customPostgresql.conf:/etc/postgresql.conf
@@ -91,6 +103,12 @@ services:
   postfix:
     image: docker.io/mwader/postfix-relay
     environment:
-      - POSTFIX_myhostname={{ domain }}
+{% if postfix_env_vars is defined and postfix_env_vars|length > 0 %}
+{% for item in postfix_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
     restart: "always"
     logging: *default-logging

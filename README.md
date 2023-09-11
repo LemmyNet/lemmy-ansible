@@ -44,7 +44,13 @@ To run this ansible playbook, you need to:
 
    You can use [the PGTune tool](https://pgtune.leopard.in.ua) to tune your postgres to meet your server memory and CPU.
 
-6. Run the playbook:
+6. Copy the sample `vars.yml` file
+
+   `cp examples/vars.yml inventory/host_vars/<your-domain>/vars.yml`
+
+   Edit the `inventory/host_vars/<your-domain>/vars.yml` file to your liking.
+
+7. Run the playbook:
 
    `ansible-playbook -i inventory/hosts lemmy.yml`
 
