@@ -20,6 +20,18 @@ pictrs_env_vars:
 #  - PICTRS__STORE__ACCESS_KEY: '<access key>'
 #  - PICTRS__STORE__SECRET_KEY: '<secret key>'
 
+postgres_env_vars:
+  - POSTGRES_USER: lemmy
+  - POSTGRES_PASSWORD: "{{ postgres_password }}"
+  - POSTGRES_DB: lemmy
 
+lemmy_env_vars:
+  - RUST_LOG: warn
 
-  
+lemmyui_env_vars:
+  - LEMMY_UI_LEMMY_INTERNAL_HOST: lemmy:8536
+  - LEMMY_UI_LEMMY_EXTERNAL_HOST: "{{ domain }}"
+  - LEMMY_UI_HTTPS: true
+
+postfix_env_vars:
+  - POSTFIX_myhostname: "{{ domain }}"
