@@ -21,7 +21,11 @@
 
     - name: Gather facts
       ansible.builtin.setup:
-
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
   tasks:
     - name: Install aptitude
       ansible.builtin.apt:
@@ -110,7 +114,7 @@
         owner: "{{ item.owner }}"
         state: directory
         mode: "0755"
-      with_items:
+      loop:
         - path: "{{ lemmy_base_dir }}/{{ domain }}/"
           owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
@@ -131,13 +135,14 @@
             owner: root
             group: root
             mode: "0644"
+          notify: Reload nginx
 
         - name: Add template files
           ansible.builtin.template:
             src: "{{ item.src }}"
             dest: "{{ item.dest }}"
             mode: "{{ item.mode }}"
-          with_items:
+          loop:
             - src: "templates/docker-compose.yml"
               dest: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
               mode: "0600"
@@ -147,6 +152,7 @@
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{ domain }}.conf"
               mode: "0644"
+          notify: Reload nginx
           vars:
             lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(lookup('file', 'VERSION')) }}"
             lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION'))) }}"
@@ -169,6 +175,7 @@
                 src: "../sites-available/{{ domain }}.conf"
                 dest: "/etc/nginx/sites-enabled/{{ domain }}.conf"
                 state: link
+          notify: Reload nginx
 
         - name: Add the config.hjson
           ansible.builtin.template:
@@ -205,10 +212,6 @@
         state: present
         pull: true
         remove_orphans: true
-
-    - name: Reload nginx with new config
-      ansible.builtin.command: nginx -s reload
-      changed_when: true
 
     - name: Certbot renewal cronjob
       ansible.builtin.cron:
