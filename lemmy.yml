@@ -158,6 +158,7 @@
             lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION'))) }}"
 
         - name: Set up nginx sites-enabled symlink
+          notify: Reload nginx
           block:
             - name: Gather stats on site enabled config
               ansible.builtin.stat:
@@ -175,7 +176,6 @@
                 src: "../sites-available/{{ domain }}.conf"
                 dest: "/etc/nginx/sites-enabled/{{ domain }}.conf"
                 state: link
-          notify: Reload nginx
 
         - name: Add the config.hjson
           ansible.builtin.template:
