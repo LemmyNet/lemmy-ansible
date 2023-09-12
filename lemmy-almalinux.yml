@@ -11,8 +11,9 @@
       when: lemmy_base_dir is not defined
   handlers:
     - name: Reload nginx
-      ansible.builtin.command: nginx -s reload
-      changed_when: true
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
   vars:
     lemmy_port: "{{ 32767 | random(start=1024) }}"
   tasks:
@@ -180,7 +181,7 @@
         - src: "templates/nginx.conf"
           dest: "/etc/nginx/conf.d/{{ domain }}.conf"
           mode: "0644"
-      notify: reload nginx
+      notify: Reload nginx
       tags:
         - nginx
 
