@@ -99,7 +99,7 @@
 
     - name: Copy docker config
       ansible.builtin.copy:
-        src: ../files/docker-daemon.json # noqa: no-relative-paths
+        src: files/docker-daemon.json
         dest: /etc/docker/daemon.json
         mode: "0644"
 
