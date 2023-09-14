@@ -75,8 +75,8 @@ To run this ansible playbook, you need to:
 - Run `git pull`
 - Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last.
 - When upgrading from older versions of these playbooks, you will need to do the following:
-   * Rename `inventory/host_vars/{{ domain }}/passwords/postgres` file to `inventory/host_vars/{{ domain }}/passwords/postgres.psk`
-   * Copy the `examples/vars.yml` file to `inventory/host_vars/{{ domain }}/vars.yml`
+  - Rename `inventory/host_vars/{{ domain }}/passwords/postgres` file to `inventory/host_vars/{{ domain }}/passwords/postgres.psk`
+  - Copy the `examples/vars.yml` file to `inventory/host_vars/{{ domain }}/vars.yml`
 - Run `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ## Migrating your existing install to use this deploy
