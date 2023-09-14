@@ -11,6 +11,34 @@
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
       when: lemmy_base_dir is not defined
 
+    - name: Check for legacy passwords/postgres file
+      delegate_to: localhost
+      ansible.builtin.stat:
+        path: "inventory/host_vars/{{ domain }}/passwords/postgres"
+      register: postgres_password_file
+
+    - name: Legacy use of passwords/postgres file
+      delegate_to: localhost
+      ansible.builtin.fail:
+        msg: >-
+          In current versions of the Lemmy Ansible playbooks, the passwords/postgres file must be renamed to passwords/postgres.psk.
+          See https://github.com/LemmyNet/lemmy-ansible#upgrading"
+      when: postgres_password_file.stat.exists
+
+    - name: Check for vars.yml file
+      delegate_to: localhost
+      ansible.builtin.stat:
+        path: "inventory/host_vars/{{ domain }}/vars.yml"
+      register: vars_file
+
+    - name: Missing vars.yml file
+      delegate_to: localhost
+      ansible.builtin.fail:
+        msg: >-
+          Missing vars.yml file, please refer to the installations instructions. See https://github.com/LemmyNet/lemmy-ansible#install
+          and https://github.com/LemmyNet/lemmy-ansible#upgrading
+      when: not vars_file.stat.exists
+
     - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
       ansible.builtin.raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
