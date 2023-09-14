@@ -2,6 +2,8 @@
 - name: Install Lemmy
   hosts: all
   gather_facts: true
+  vars_files:
+    - "inventory/host_vars/{{ domain }}/vars.yml"
   pre_tasks:
     # This is not needed for this playbook as it predates its existence
     # But we're keeping it for funsies :)
