@@ -37,7 +37,7 @@
       ansible.builtin.fail:
         msg: >-
           Missing vars.yml file, please refer to the installations instructions. See https://github.com/LemmyNet/lemmy-ansible#install
-          and https://github.com/LemmyNet/lemmy-ansible#upgrading"
+          and https://github.com/LemmyNet/lemmy-ansible#upgrading
       when: not vars_file.stat.exists
   handlers:
     - name: Reload nginx

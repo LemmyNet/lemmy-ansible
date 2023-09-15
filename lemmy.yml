@@ -24,7 +24,7 @@
       ansible.builtin.fail:
         msg: >-
           In current versions of the Lemmy Ansible playbooks, the passwords/postgres file must be renamed to passwords/postgres.psk.
-          See https://github.com/LemmyNet/lemmy-ansible#upgrading"
+          See https://github.com/LemmyNet/lemmy-ansible#upgrading
       when: postgres_password_file.stat.exists
 
     - name: Check for vars.yml file
