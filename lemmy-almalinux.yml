@@ -113,9 +113,10 @@
         - firewalld
 
     - name: Reload firewalld
-      ansible.builtin.command: firewall-cmd --reload
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
       when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
-      changed_when: true
       tags:
         - firewalld
 
