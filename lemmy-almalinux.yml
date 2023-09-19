@@ -98,14 +98,17 @@
       tags:
         - firewalld
 
-    # TODO: Use ansible.posix.firewalld
     - name: Allow http/httpd traffic to public zone in firewalld
-      ansible.builtin.command: "firewall-cmd --zone=public --add-service={{ item }} --perm"
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        state: enabled
+        zone: public
+        permanent: true
+        immediate: true
       loop:
         - http
         - https
       when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
-      changed_when: true
       tags:
         - firewalld
 
