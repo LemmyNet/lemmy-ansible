@@ -44,6 +44,11 @@
       ansible.builtin.systemd:
         name: nginx
         state: reloaded
+
+    - name: Reload firewalld
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
   vars:
     lemmy_port: "{{ 32767 | random(start=1024) }}"
   tasks:
@@ -109,14 +114,7 @@
         - http
         - https
       when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
-      tags:
-        - firewalld
-
-    - name: Reload firewalld
-      ansible.builtin.systemd:
-        name: firewalld
-        state: reloaded
-      when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
+      notify: Reload firewalld
       tags:
         - firewalld
 
