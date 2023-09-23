@@ -35,3 +35,12 @@ lemmyui_env_vars:
 
 postfix_env_vars:
   - POSTFIX_myhostname: "{{ domain }}"
+
+pictrs_safety_env_vars:
+  # Use this in your fedi-safety to allow your worker to authenticate to pictrs-safety
+  - FEDIVERSE_SAFETY_WORKER_AUTH: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}"
+  - FEDIVERSE_SAFETY_IMGDIR: "/tmp/images"
+  - USE_SQLITE: 1
+  - secret_key: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}"
+  - SCAN_BYPASS_THRESHOLD: 10
+  - MISSING_WORKER_THRESHOLD: 5

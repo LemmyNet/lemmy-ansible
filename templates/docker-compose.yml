@@ -60,7 +60,7 @@ services:
     logging: *default-logging
 
   pictrs:
-    image: docker.io/asonix/pictrs:0.4.0
+    image: docker.io/asonix/pictrs:0.4.3
     # this needs to match the pictrs url in lemmy.hjson
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
@@ -72,6 +72,9 @@ services:
       - {{ key }}={{ value }}
 {% endfor %}
 {% endfor %}
+{% endif %}
+{% if pictrs_safety is defined and pictrs_safety|bool == true %}
+      - PICTRS__MEDIA__EXTERNAL_VALIDATION=http://{{ domain }}:14051/api/v1/scan/IPADDR
 {% endif %}
     user: 991:991
     volumes:
@@ -112,3 +115,29 @@ services:
 {% endif %}
     restart: "always"
     logging: *default-logging
+
+{% if pictrs_safety is defined and pictrs_safety|bool == true %}
+  pictrs-safety:
+    image: ghcr.io/db0/pictrs-safety:main
+    hostname: "pictrs-safety"
+    networks:
+      - lemmyinternal
+      - lemmyexternalproxy
+    environment:
+{% if pictrs_safety_env_vars is defined and pictrs_safety_env_vars|length > 0 %}
+{% for item in pictrs_safety_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+    ports:
+      - "14051:14051"
+    expose:
+      - '14051'
+    user: 991:991
+    restart: always
+    logging: *default-logging
+    depends_on:
+      - pictrs
+{% endif %}
