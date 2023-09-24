@@ -118,7 +118,7 @@ services:
 
 {% if pictrs_safety is defined and pictrs_safety|bool == true %}
   pictrs-safety:
-    image: ghcr.io/db0/pictrs-safety:main
+    image: ghcr.io/db0/pictrs-safety:v1.2.2
     hostname: "pictrs-safety"
     networks:
       - lemmyinternal
