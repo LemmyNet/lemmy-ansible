@@ -1,4 +1,7 @@
-postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres.psk chars=ascii_letters,digits') }}"
+postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}"
+# Next two only relevant if pictrs_safety == True
+pictrs_safety_worker_auth: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}"
+pictrs_safety_secret: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}"
 
 # You can set any pict-rs environmental variables here. They will populate the templates/docker-compose.yml file.
 # https://git.asonix.dog/asonix/pict-rs
@@ -38,9 +41,9 @@ postfix_env_vars:
 
 pictrs_safety_env_vars:
   # Use this in your fedi-safety to allow your worker to authenticate to pictrs-safety
-  - FEDIVERSE_SAFETY_WORKER_AUTH: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}"
+  - FEDIVERSE_SAFETY_WORKER_AUTH: "{{ pictrs_safety_worker_auth }}"
   - FEDIVERSE_SAFETY_IMGDIR: "/tmp/images"
   - USE_SQLITE: 1
-  - secret_key: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}"
+  - secret_key: "{{ pictrs_safety_secret }}"
   - SCAN_BYPASS_THRESHOLD: 10
   - MISSING_WORKER_THRESHOLD: 5

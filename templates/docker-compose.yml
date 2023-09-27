@@ -119,10 +119,7 @@ services:
 {% if pictrs_safety is defined and pictrs_safety|bool == true %}
   pictrs-safety:
     image: ghcr.io/db0/pictrs-safety:v1.2.2
-    hostname: "pictrs-safety"
-    networks:
-      - lemmyinternal
-      - lemmyexternalproxy
+    hostname: pictrs-safety
     environment:
 {% if pictrs_safety_env_vars is defined and pictrs_safety_env_vars|length > 0 %}
 {% for item in pictrs_safety_env_vars %}
@@ -133,8 +130,6 @@ services:
 {% endif %}
     ports:
       - "14051:14051"
-    expose:
-      - '14051'
     user: 991:991
     restart: always
     logging: *default-logging
