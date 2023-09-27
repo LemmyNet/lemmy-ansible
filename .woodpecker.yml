@@ -2,7 +2,7 @@ pipeline:
   prettier_markdown_check:
     image: tmknom/prettier
     commands:
-      - prettier -c "*.md" "*.yml"
+      - prettier -c "*.md" "*.yml" "examples/vars.yml"
   check_ansible_format:
     image: alpine:3
     commands:
@@ -14,4 +14,4 @@ pipeline:
     image: alpine:3
     commands:
       - apk add ansible ansible-lint
-      - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml
+      - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml examples/vars.yml
