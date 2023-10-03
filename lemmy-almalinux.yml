@@ -114,7 +114,6 @@
         - http
         - https
       when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
-      notify: Reload firewalld
       tags:
         - firewalld
 
