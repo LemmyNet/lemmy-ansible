@@ -13,11 +13,12 @@ To run this ansible playbook, you need to:
 
 ## Install
 
-1. Clone this repo:
+1. Clone this repo & checkout latest tag
 
    ```
    git clone https://github.com/LemmyNet/lemmy-ansible.git
    cd lemmy-ansible
+   git checkout $(git describe --tags)
    ```
 
 2. Make a directory to hold your config:
@@ -72,12 +73,28 @@ To run this ansible playbook, you need to:
 
 ## Upgrading
 
-- Run `git pull`
-- Check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last.
+Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
+With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last.
+
+### Upgrading to 1.2.0 (Lemmy 0.18.5)
+
+Major changes:
+
+- All variables are not under a singular file so you will not need to modify anything: `inventory/host_vars/{{ domain }}/vars.yml`
+- `--become` is now optional instead of forced on
+
+#### Steps
+
+- Run `git pull && git checkout 1.2.0`
 - When upgrading from older versions of these playbooks, you will need to do the following:
   - Rename `inventory/host_vars/{{ domain }}/passwords/postgres` file to `inventory/host_vars/{{ domain }}/passwords/postgres.psk`
   - Copy the `examples/vars.yml` file to `inventory/host_vars/{{ domain }}/vars.yml`
-- Run `ansible-playbook -i inventory/hosts lemmy.yml --become`
+  - Edit your variables as desired
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+
+### Upgrading to 1.1.0 (Lemmy 0.18.3)
+
+- No major changes should be required
 
 ## Migrating your existing install to use this deploy
 
