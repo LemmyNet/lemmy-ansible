@@ -1,6 +1,6 @@
 # Lemmy-Ansible
 
-This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server. It automatically sets up an nginx server, letsencrypt certificates, and email.
+This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server. It automatically sets up an nginx server, letsencrypt certificates, docker containers, and email smtp.
 
 ## Requirements
 
@@ -10,6 +10,19 @@ To run this ansible playbook, you need to:
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it, with a sudo user: `ssh <your-user>@<your-domain>`
 - Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your **local** machine (do not install it on your destination server).
+
+### Supported Distribution Playbook Matrix
+
+These are the distributions we currently support. Anything not listed here is currently not supported.  
+If you wish to see another distribution on the list, please test on the latest commit in `main` and report your findings via an Issue.
+
+| Distribution | Version | Playbook |
+|---|---|---|
+| Debian | 10 | `lemmy.yml` |
+| Debian | 11 | `lemmy.yml` |
+| Debian | 12 | `lemmy.yml` |
+| Ubuntu | 22.04 LTS | `lemmy.yml` |
+| RHEL | 9 | `lemmy-almalinux.yml` |
 
 ## Install
 
@@ -51,15 +64,15 @@ To run this ansible playbook, you need to:
 
    Edit the `inventory/host_vars/<your-domain>/vars.yml` file to your liking.
 
-7. Run the playbook:
+7. Run the playbook: [^1]
 
-   `ansible-playbook -i inventory/hosts lemmy.yml`
+   `ansible-playbook -i inventory/hosts lemmy.yml` 
 
    _Note_: if you are not the root user or don't have password-less sudo, use this command:
 
    `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
-   _Note_: if you haven't set up ssh keys[^1], and ssh using a password, use the command:
+   _Note_: if you haven't set up ssh keys[^2], and ssh using a password, use the command:
 
    `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
 
@@ -69,7 +82,8 @@ To run this ansible playbook, you need to:
 
    `interpreter_python=/usr/bin/python3`
 
-[^1]: To create an ssh key pair with your host environment, you can follow the [instructions here](https://www.ssh.com/academy/ssh/keygen#copying-the-public-key-to-the-server), and then copy the key to your host server.
+[^1]: For RHEL distributions please replace `lemmy.yml` with `lemmy-almalinux.yml`
+[^2]: To create an ssh key pair with your host environment, you can follow the [instructions here](https://www.ssh.com/academy/ssh/keygen#copying-the-public-key-to-the-server), and then copy the key to your host server.
 
 ## Upgrading
 
