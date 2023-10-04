@@ -1,6 +1,6 @@
 # Lemmy-Ansible
 
-This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server. It automatically sets up an nginx server, letsencrypt certificates, docker containers, and email smtp.
+This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) on any server. It automatically sets up an nginx server, letsencrypt certificates, docker containers, pict-rs, and email smtp.
 
 ## Requirements
 
