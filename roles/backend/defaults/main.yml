@@ -1,0 +1,4 @@
+---
+
+lemmy_env_vars:
+  - RUST_LOG: warn

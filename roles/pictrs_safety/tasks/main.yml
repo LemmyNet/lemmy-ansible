@@ -1,0 +1,23 @@
+---
+
+- name: Insert pictrs-safety into docker-compose
+  ansible.builtin.blockinfile:
+    block: "{{ lookup('ansible.builtin.template', 'docker-compose.yml.j2') }}"
+    path: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
+    backup: yes
+
+- name: ensure pict-rs is using pictrs-safety
+  ansible.builtin.lineinfile:
+    path: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
+    regexp: '.*PICTRS__MEDIA__EXTERNAL_VALIDATION.*'
+    insertafter: '.*PICTRS__SERVER__API_KEY.*'
+    line: "      - PICTRS__MEDIA__EXTERNAL_VALIDATION=http://{{ domain }}:14051/api/v1/scan/IPADDR"
+
+- name: Distribution-specific tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "{{ ansible_facts.distribution }}.yml"
+      - "{{ ansible_facts.os_family }}.yml"

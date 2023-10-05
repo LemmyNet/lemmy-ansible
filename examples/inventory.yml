@@ -1,0 +1,22 @@
+all:
+  vars:
+    ansible_connection: ssh
+  hosts:
+    lemmy_example_com:
+      ansible_host: 192.168.10.1
+      ansible_become: true
+  children:
+    lemmy:
+      vars:
+        # replace `root` with your the username you use to connect to your ssh server
+        ansible_user: root
+        # replace `lemmy.example.com` with your lemmy domain
+        domain: lemmy.example.com
+        # replace `your@email.com` with your email address,
+        # to get notifications if your ssl cert expires
+        letsencrypt_contact_email: your@email@lemmy.example.com
+        # the location on the server where lemmy can be installed, can be any folder
+        # if you are upgrading from a previous version, set this to `/lemmy`
+        lemmy_base_dir: /srv/lemmy
+      hosts:
+        lemmy_example_com:

@@ -1,0 +1,10 @@
+---
+
+pictrs_safety_env_vars:
+  # Use this in your fedi-safety to allow your worker to authenticate to pictrs-safety
+  - FEDIVERSE_SAFETY_WORKER_AUTH: "{{ pictrs_safety_worker_auth }}"
+  - FEDIVERSE_SAFETY_IMGDIR: "/tmp/images"
+  - USE_SQLITE: 1
+  - secret_key: "{{ pictrs_safety_secret }}"
+  - SCAN_BYPASS_THRESHOLD: 10
+  - MISSING_WORKER_THRESHOLD: 5

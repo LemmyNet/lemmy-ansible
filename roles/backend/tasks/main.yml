@@ -1,0 +1,30 @@
+---
+
+- name: Create lemmy folder
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - path: "{{ lemmy_base_dir }}/{{ domain }}/"
+      owner: "root"
+    - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
+      owner: "root"
+    - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
+      owner: "991" # Matches docker-compose UID in docker-compose.yml
+
+- name: Set lemmy_port fact
+  ansible.builtin.set_fact:
+    lemmy_port: "{{ 32767 | random(start=1024) }}"
+  tags:
+    - always
+
+- name: Distribution-specific tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "{{ ansible_facts.distribution }}.yml"
+      - "{{ ansible_facts.os_family }}.yml"

@@ -46,11 +46,11 @@ If you wish to see another distribution on the list, please test on the latest c
 
    [Here are all the config options.](https://join-lemmy.org/docs/en/administration/configuration.html#full-config-with-default-values)
 
-4. Copy the sample inventory yml file:
+4. Copy the sample inventory hosts file:
 
-   `cp examples/inventory.yml inventory/inventory.yml`
+   `cp examples/hosts inventory/hosts`
 
-   Edit the inventory `inventory.yml` file (`inventory/inventory.yml`) to your liking.
+   Edit the inventory hosts file (inventory/hosts) to your liking.
 
 5. Copy the sample postgresql.conf
 
@@ -68,15 +68,15 @@ If you wish to see another distribution on the list, please test on the latest c
 
    _Note_: See the "Supported Distribution Playbook Matrix" section above if you should use `lemmy.yml` or not
 
-   `ansible-playbook -i inventory/inventory.yml lemmy.yml`
+   `ansible-playbook -i inventory/hosts lemmy.yml`
 
    _Note_: if you are not the root user or don't have password-less sudo, use this command:
 
-   `ansible-playbook -i inventory/inventory.yml lemmy.yml --become --ask-become-pass`
+   `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-become-pass`
 
    _Note_: if you haven't set up ssh keys[^1], and ssh using a password, use the command:
 
-   `ansible-playbook -i inventory/inventory.yml lemmy.yml --become --ask-pass --ask-become-pass`
+   `ansible-playbook -i inventory/hosts lemmy.yml --become --ask-pass --ask-become-pass`
 
    [Full ansible command-line docs](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html)
 
@@ -105,7 +105,7 @@ Major changes:
   - Rename `inventory/host_vars/{{ domain }}/passwords/postgres` file to `inventory/host_vars/{{ domain }}/passwords/postgres.psk`
   - Copy the `examples/vars.yml` file to `inventory/host_vars/{{ domain }}/vars.yml`
   - Edit your variables as desired
-- Run your regular deployment. Example: `ansible-playbook -i inventory/inventory.yml lemmy.yml --become`
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ### Upgrading to 1.1.0 (Lemmy 0.18.3)
 
@@ -121,7 +121,7 @@ Major changes:
 
 ## Uninstall
 
-`ansible-playbook -i inventory/inventory.yml uninstall.yml --become`
+`ansible-playbook -i inventory/hosts uninstall.yml --become`
 
 ## License
 

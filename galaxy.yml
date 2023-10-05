@@ -1,0 +1,20 @@
+---
+
+namespace: "lemmynet"
+name: "lemmy"
+version: "0.1.0"
+readme: "README.md"
+authors:
+    - "dessalines"
+    - "codyro"
+    - "db0"
+dependencies: {}
+license:
+    - "GPL-3.0-or-later"
+tags:
+    - lemmy
+    - docker
+    - collection
+repository: "https://github.com/LemmyNet/lemmy-ansible"
+issues: "https://github.com/LemmyNet/lemmy-ansible/issues"
+description: Collection for installation of lemmy and adjacent software

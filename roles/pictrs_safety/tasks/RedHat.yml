@@ -1,0 +1,19 @@
+---
+
+- name: Run podman-compose pull
+  ansible.builtin.command: podman-compose pull
+  args:
+    chdir: "{{ lemmy_base_dir }}/{{ domain }}"
+  changed_when: true
+  tags:
+    - docker
+    - podman
+
+- name: Run podman-compose up
+  ansible.builtin.command: podman-compose up -d
+  args:
+    chdir: "{{ lemmy_base_dir }}/{{ domain }}"
+  changed_when: true
+  tags:
+    - docker
+    - podman
