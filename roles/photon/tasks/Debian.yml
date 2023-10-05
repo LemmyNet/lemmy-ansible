@@ -1,0 +1,8 @@
+---
+
+- name: Start docker-compose
+  community.docker.docker_compose:
+    project_src: "{{ lemmy_base_dir }}/{{ domain }}"
+    state: present
+    pull: true
+    remove_orphans: true

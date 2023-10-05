@@ -1,0 +1,10 @@
+  photon:
+    image: ghcr.io/xyphyn/photon:latest
+    ports:
+      - "{{ photon_port }}:3000"
+    environment:
+      - PUBLIC_INSTANCE_URL={{ domain }}
+    depends_on:
+      - lemmy
+    restart: always
+    logging: *default-logging

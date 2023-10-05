@@ -55,6 +55,8 @@
   roles:
   - role: lemmynet.lemmy.backend
     tags: backend
+  - role: lemmynet.lemmy.photon
+    tags: frontend
   - role: lemmynet.lemmy.pictrs_safety
     tags: backend
       
