@@ -1,7 +1,8 @@
-postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}"
+postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}" # noqa yaml[line-length]:w
+
 # Next two only relevant if pictrs_safety == True
-pictrs_safety_worker_auth: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}"
-pictrs_safety_secret: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}"
+pictrs_safety_worker_auth: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}" # noqa yaml[line-length]
+pictrs_safety_secret: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}" # noqa yaml[line-length]
 
 # You can set any pict-rs environmental variables here. They will populate the templates/docker-compose.yml file.
 # https://git.asonix.dog/asonix/pict-rs
