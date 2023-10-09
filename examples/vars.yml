@@ -1,4 +1,4 @@
-postgres_password: "{{ lookup('password', 'inventory/host_vars/{{domain}}/passwords/postgres.psk chars=ascii_letters,digits') }}"
+postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}" # noqa yaml[line-length]:w
 
 # You can set any pict-rs environmental variables here. They will populate the templates/docker-compose.yml file.
 # https://git.asonix.dog/asonix/pict-rs
