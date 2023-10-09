@@ -186,9 +186,9 @@
         # src: "files/{{ domain }}/customPostgresql.conf"
         src: "inventory/host_vars/{{ domain }}/customPostgresql.conf"
         dest: "{{ lemmy_base_dir }}/{{ domain }}/customPostgresql.conf"
-        mode: "0600"
-        owner: "1000" # Match UID in container
-        group: "1000" # Match GID in container
+        mode: "0644"
+        owner: root
+        group: root
       tags:
         - configs
         - postgresql
