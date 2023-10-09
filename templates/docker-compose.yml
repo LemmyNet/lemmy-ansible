@@ -98,6 +98,7 @@ services:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
       - ./customPostgresql.conf:/etc/postgresql.conf
     restart: always
+    command: postgres -c config_file=/etc/postgresql.conf
     logging: *default-logging
 
   postfix:
