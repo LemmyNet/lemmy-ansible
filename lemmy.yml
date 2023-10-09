@@ -18,6 +18,7 @@
       ansible.builtin.stat:
         path: "inventory/host_vars/{{ domain }}/passwords/postgres"
       register: postgres_password_file
+      become: false
 
     - name: Legacy use of passwords/postgres file
       delegate_to: localhost
@@ -26,12 +27,14 @@
           In current versions of the Lemmy Ansible playbooks, the passwords/postgres file must be renamed to passwords/postgres.psk.
           See https://github.com/LemmyNet/lemmy-ansible#upgrading
       when: postgres_password_file.stat.exists
+      become: false
 
     - name: Check for vars.yml file
       delegate_to: localhost
       ansible.builtin.stat:
         path: "inventory/host_vars/{{ domain }}/vars.yml"
       register: vars_file
+      become: false
 
     - name: Missing vars.yml file
       delegate_to: localhost
@@ -40,6 +43,7 @@
           Missing vars.yml file, please refer to the installations instructions. See https://github.com/LemmyNet/lemmy-ansible#install
           and https://github.com/LemmyNet/lemmy-ansible#upgrading
       when: not vars_file.stat.exists
+      become: false
 
     - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
