@@ -6,11 +6,10 @@ This provides an easy way to install [Lemmy](https://github.com/LemmyNet/lemmy) 
 
 To run this ansible playbook, you need to:
 
-- ansible-core >= 2.11.0
 - Have a Debian/AlmaLinux 9-based server / VPS where lemmy will run.
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it, with a sudo user: `ssh <your-user>@<your-domain>`
-- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your **local** machine (do not install it on your destination server).
+- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (>= `2.10.0` on your **local** machine (do not install it on your destination server).
 
 ### Supported Distribution Playbook Matrix
 
