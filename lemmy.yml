@@ -8,6 +8,14 @@
   vars_files:
     - "inventory/host_vars/{{ domain }}/vars.yml"
   pre_tasks:
+    - name: Assert that Ansible version is >= 2.11.0
+      delegate_to: localhost
+      ansible.builtin.assert:
+        that:
+          - "ansible_version.full is version('2.11.0', '>=')"
+        fail_msg: "This playbook requires Ansible 2.11.0 or higher"
+      become: false
+
     - name: Check lemmy_base_dir
       ansible.builtin.fail:
         msg: "`lemmy_base_dir` is unset. if you are upgrading from an older version, add `lemmy_base_dir=/lemmy` to your inventory file."
