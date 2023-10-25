@@ -91,6 +91,21 @@ If you wish to see another distribution on the list, please test on the latest c
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
+### Upgrading to 1.2.1 (Lemmy 0.18.5)
+
+This is a minor change which fixes the issue with the Postgres container not using the `customPostgres.conf` file.
+
+#### Steps
+
+- Please regenerate your `customPostgres.conf` from `examples/customPostgres.conf`
+- **OR**
+- Add the following block to your current customPostgres file.
+
+```
+# Listen beyond localhost
+listen_addresses = '*'
+```
+
 ### Upgrading to 1.2.0 (Lemmy 0.18.5)
 
 Major changes:
