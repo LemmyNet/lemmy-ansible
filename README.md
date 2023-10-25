@@ -16,13 +16,13 @@ To run this ansible playbook, you need to:
 These are the distributions we currently support. Anything not listed here is currently not supported.  
 If you wish to see another distribution on the list, please test on the latest commit in `main` and report your findings via an Issue.
 
-| Distribution | Version   | Playbook              |
-| ------------ | --------- | --------------------- |
-| Debian       | 10        | `lemmy.yml`           |
-| Debian       | 11        | `lemmy.yml`           |
-| Debian       | 12        | `lemmy.yml`           |
-| Ubuntu       | 22.04 LTS | `lemmy.yml`           |
-| RHEL         | 9         | `lemmy-almalinux.yml` |
+| Distribution | Version   | Architecture | Playbook              |
+| ------------ | --------- | ------------ |--------------------- |
+| Debian       | 10        | amd64        | `lemmy.yml`           |
+| Debian       | 11        | amd64        | `lemmy.yml`           |
+| Debian       | 12        | amd64        | `lemmy.yml`           |
+| Ubuntu       | 22.04 LTS | amd64        | `lemmy.yml`           |
+| RHEL         | 9         | amd64        | `lemmy-almalinux.yml` |
 
 ## Install
 
