@@ -93,7 +93,7 @@ With every new release all migration steps shall be written below so make sure y
 
 ### Upgrading to 1.2.1 (Lemmy 0.18.5)
 
-This is a minor change which fixes the issue with the Postgres container not using the `customPostgres.conf` file. 
+This is a minor change which fixes the issue with the Postgres container not using the `customPostgres.conf` file.
 
 #### Steps
 
