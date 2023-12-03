@@ -69,7 +69,7 @@
         that:
           - ansible_distribution in ['AlmaLinux', 'CentOS', 'RedHat', 'Rocky']
           - ansible_distribution_major_version | int >= 9
-        fail_msg: "This playbook requires Enterprise Linux 9 or greater"
+        fail_msg: "This playbook requires Enterprise Linux 9 or greater on the target server"
       tags:
         - always
 
