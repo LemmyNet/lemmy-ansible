@@ -69,6 +69,12 @@
         name: nginx
         state: reloaded
   tasks:
+    - name: Ensure target system is Debian or Ubuntu
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution in ['Debian', 'Ubuntu']
+        fail_msg: "This playbook requires Debian or Ubuntu on the target server"
+
     - name: Install aptitude
       ansible.builtin.apt:
         name: aptitude
