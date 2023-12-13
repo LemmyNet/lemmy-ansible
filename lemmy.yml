@@ -98,6 +98,14 @@
           - "virtualenv"
           - "python3-setuptools"
 
+    - name: Allow HTTP and HTTPS in ufw
+      ansible.builtin.ufw:
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - "http"
+        - "https"
+
     - name: Configure Docker apt repo for Ubuntu < 22.04
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
       block:
