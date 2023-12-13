@@ -99,7 +99,7 @@
           - "python3-setuptools"
 
     - name: Allow HTTP and HTTPS in ufw
-      when: (ansible_distribution == 'Debian') or 
+      when: (ansible_distribution == 'Debian') or
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       ansible.builtin.ufw:
         rule: allow
