@@ -96,6 +96,10 @@ With every new release all migration steps shall be written below so make sure y
 
 This is a minor release which directly goes to pict-rs 0.5.0
 
+- Run `git pull && git checkout 1.3.0`
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+
+
 ### Upgrading to 1.3.0 (Lemmy 0.19.0 & pictrs-0.4.7)
 
 This is a major change and has required reading! tl;dr
