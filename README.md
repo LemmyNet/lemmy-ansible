@@ -92,17 +92,41 @@ If you wish to see another distribution on the list, please test on the latest c
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
-### Upgrading to 1.3.0 (Lemmy 0.19.x)
+### Upgrading to 1.3.1 (Lemmy 0.19.0 & pict-rs 0.5.0)
 
-This is a major change with Lemmy & the first change which introduces Optional containers for lemmy-ansible. 
+This is a minor release which directly goes to pict-rs 0.5.0
 
-#### Lemmy Update Steps
+### Upgrading to 1.3.0 (Lemmy 0.19.0 & pictrs-0.4.7)
+
+This is a major change and has required reading! tl;dr
+
+- Lemmy has been upgraded to 0.19.0
+- pict-rs has been upgraded to 0.4.7
+  - pict-rs has not been integrated with postgres yet 
+- "Optional Modules" are now available to be added to your lemmy install as provided by the community.
+  - The first being pictrs-safety 
+
+#### Steps
 
 - Run `git pull && git checkout 1.3.0`
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 - INSERT ITEMS REGARDING ANY DOWNTIME
 
-#### Optional Module
+#### Update your pict-rs sled-database (for old installations/databases)
+
+If you are happy for pict-rs to be down _for a while_ go straight to our `1.3.1` git tag. Otherwise keep reading.
+Starting with 0.5.0 your database will automatically upgrade to the latest verison, which will cause downtime for your users.
+As such there is an intermidiary step where you can upgrade your database in the background to prepare for 0.5 (Reference documentation)[https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint]. To ensure no-one is caught out by unforseen downtime, first we are upgrading from 0.4.3 to 0.4.7 to allow you to perform a background upgrade.  
+
+Once you have deployed lemmy-ansible `1.3.0` tag, please continue:
+
+- Take note of what your pict-rs API Key is under `vars.yml`
+- Run the following command against the pict-rs container replacing `api-key` with your actual api-key!
+- ``` docker compose exec pictrs \
+  curl -XPOST -H'X-Api-Token: api-key' 'http://localhost:8080/internal/prepare_upgrade'
+- This will start the background process updating your database from 0.4 to 0.5 compatible. 
+
+#### Optional Module(s)
 
 Our first optional module is [pictrs-safety](https://github.com/db0/pictrs-safety). See the repo linked for more information, especially for integration with pictrs (which is what it is for) Thanks to @db0 for their contribution.  
 See the `pictrs_safety_env_vars` under `examples/vars.yml` for relevant options (and the two password variables)  
