@@ -92,6 +92,22 @@ If you wish to see another distribution on the list, please test on the latest c
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
+### Upgrading to 1.3.0 (Lemmy 0.19.x)
+
+This is a major change with Lemmy & the first change which introduces Optional containers for lemmy-ansible. 
+
+#### Lemmy Update Steps
+
+- Run `git pull && git checkout 1.3.0`
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+- INSERT ITEMS REGARDING ANY DOWNTIME
+
+#### Optional Module
+
+Our first optional module is [pictrs-safety](https://github.com/db0/pictrs-safety). See the repo linked for more information, especially for integration with pictrs (which is what it is for) Thanks to @db0 for their contribution.  
+See the `pictrs_safety_env_vars` under `examples/vars.yml` for relevant options (and the two password variables)  
+To enable this module to be used you must ADD `pictrs_safety: true` to your `vars.yml`.
+
 ### Upgrading to 1.2.1 (Lemmy 0.18.5)
 
 This is a minor change which fixes the issue with the Postgres container not using the `customPostgres.conf` file.
