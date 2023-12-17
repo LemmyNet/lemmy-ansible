@@ -122,8 +122,9 @@ Once you have deployed lemmy-ansible `1.3.0` tag, please continue:
 
 - Take note of what your pict-rs API Key is under `vars.yml`
 - Run the following command against the pict-rs container replacing `api-key` with your actual api-key!
-- ```docker compose exec pictrs \
-  curl -XPOST -H'X-Api-Token: api-key' 'http://localhost:8080/internal/prepare_upgrade'
+- ```
+  docker compose exec pictrs \
+    curl -XPOST -H'X-Api-Token: api-key' 'http://localhost:8080/internal/prepare_upgrade'
   ```
 - This will start the background process updating your database from 0.4 to 0.5 compatible.
 
