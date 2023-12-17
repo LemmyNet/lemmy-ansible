@@ -106,7 +106,6 @@ This is a major change and has required reading! tl;dr
 
 - Run `git pull && git checkout 1.3.0`
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-- INSERT ITEMS REGARDING ANY DOWNTIME
 
 #### Update your pict-rs sled-database (for old installations/databases)
 
