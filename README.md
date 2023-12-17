@@ -104,8 +104,13 @@ This is a major change and has required reading! tl;dr
 
 #### Steps
 
+- Prepare to have downtime as the database needs to perform migrations!
 - Run `git pull && git checkout 1.3.0`
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+- Lemmy will now be down! In testing this takes from 20 to 60 minutes.
+   - If you are bored you can ssh into your server, and check the logs on postgres for updates
+   - `docker compose logs -f postgres` while ssh'd and in your Lemmy directory
+
 
 #### Update your pict-rs sled-database (for old installations/databases)
 
