@@ -99,6 +99,7 @@ services:
 {% endif %}
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
+      - ./volumes/backups:/dump:Z
       - ./customPostgresql.conf:/etc/postgresql.conf
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf

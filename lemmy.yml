@@ -167,6 +167,8 @@
           owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
           owner: "root"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/backups/"
+          owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
           owner: "991"
 
@@ -224,6 +226,14 @@
                 src: "../sites-available/{{ domain }}.conf"
                 dest: "/etc/nginx/sites-enabled/{{ domain }}.conf"
                 state: link
+
+        - name: Add backup script
+          ansible.builtin.template:
+            src: "tempaltes/backup.sh"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/backup.sh"
+            mode: "0755"
+            owner: root
+            group: root
 
         - name: Add the config.hjson
           ansible.builtin.template:

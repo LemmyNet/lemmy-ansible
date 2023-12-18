@@ -150,6 +150,8 @@
           owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/"
           owner: "root"
+        - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/backups/"
+          owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
           owner: "991" # Matches docker-compose UID in docker-compose.yml
 
@@ -191,8 +193,6 @@
       tags:
         - configs
 
-    # TODO: Move to files/, keeping consistent with upstream currently
-    # to ensure documentation is accurate
     - name: Add the customPostgresql.conf
       ansible.builtin.template:
         # src: "files/{{ domain }}/customPostgresql.conf"
@@ -209,11 +209,19 @@
       ansible.builtin.copy:
         src: files/proxy_params
         dest: "{{ lemmy_base_dir }}/{{ domain }}/proxy_params"
+        mode: "0644"
         owner: root
         group: root
-        mode: "0644"
       tags:
         - nginx
+
+    - name: Distribute backup script
+      ansible.builtin.template:
+        src: "tempaltes/backup.sh"
+        dest: "{{ lemmy_base_dir }}/{{ domain }}/backup.sh"
+        mode: "0755"
+        owner: root
+        group: root
 
     - name: Distribute nginx site templates
       ansible.builtin.template:
