@@ -92,6 +92,15 @@ If you wish to see another distribution on the list, please test on the latest c
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
+### Upgrading to 1.3.1 (Lemmy 0.19.1)
+
+This is a very minor release but fixes issues relating to federation as part of the Lemmy update.
+
+#### Steps
+
+- `git pull && git checkout 1.3.1`
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+
 ### Upgrading to 1.3.0 (Lemmy 0.19.0 & pictrs-0.4.7)
 
 This is a major change and has required reading! tl;dr
@@ -113,7 +122,7 @@ This is a major change and has required reading! tl;dr
 
 #### Update your pict-rs sled-database (Optional)
 
-If you are happy for pict-rs to be down _for a while_ go straight to our `1.3.1` git tag which updates pictrs to 0.5.0. Otherwise keep reading.
+If you are happy for pict-rs to be down _for a while_ ~go straight to our `1.3.1` git tag which updates pictrs to 0.5.0~. Otherwise keep reading.
 Starting with 0.5.0 your database will automatically upgrade to the latest version, which will cause downtime for your users.
 As such there is an intermediary step where you can upgrade your database in the background to prepare for 0.5 (Reference documentation)[https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint]. This ensure no-one is caught out by unforseen downtime of multiple services.
 
