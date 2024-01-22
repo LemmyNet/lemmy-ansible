@@ -29,8 +29,8 @@
       ansible.builtin.meta: end_play
       when: not confirm_uninstall | bool
 
-    - name: Run Ubuntu specific uninstallation steps
-      when: ansible_distribution == "Ubuntu"
+    - name: Run Debian/Ubuntu specific uninstallation steps
+      when: ansible_distribution in ['Debian', 'Ubuntu']
       block:
         - name: Stop docker-compose
           community.docker.docker_compose:
