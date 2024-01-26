@@ -100,7 +100,7 @@ This is a semi-major release which upgrades pict-rs to 0.5 which has support for
 
 - `git pull && git checkout 1.4.0`
 - Read [Pictrs' Configuration Changes](https://git.asonix.dog/asonix/pict-rs/#configuration-updates)
-- Ammend your `vars.yml` file to respect the new changes
+- Amend your `vars.yml` file to respect the new changes
   - Optional: Add: `PICTRS__UPGRADE__CONCURRENCY` with a value between 32 and 512 depending on how much RAM/CPU you want to dedicate to the upgrade process. A value of 32 used about 2.5GB of RAM for the migration.
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
