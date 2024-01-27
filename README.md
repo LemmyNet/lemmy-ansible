@@ -102,6 +102,7 @@ This is a semi-major release which upgrades pict-rs to 0.5 which has support for
 - Read [Pictrs' Configuration Changes](https://git.asonix.dog/asonix/pict-rs/#configuration-updates)
 - Amend your `vars.yml` file to respect the new changes
   - Optional: Add: `PICTRS__UPGRADE__CONCURRENCY` with a value between 32 and 512 depending on how much RAM/CPU you want to dedicate to the upgrade process. A value of 32 used about 2.5GB of RAM for the migration.
+  - Optional: Curl `/internal/prepare_upgrade` to minimise downtime while upgrading. See [the instructions below](https://github.com/LemmyNet/lemmy-ansible#update-your-pict-rs-sled-database-optional) or the official documentation [here](https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint)
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ### Upgrading to 1.3.1 (Lemmy 0.19.1)
