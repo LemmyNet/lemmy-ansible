@@ -92,6 +92,19 @@ If you wish to see another distribution on the list, please test on the latest c
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
+### Upgrading to 1.4.0 (Lemmy 0.19.3 & Pict-rs 0.5.4)
+
+This is a semi-major release which upgrades pict-rs to 0.5 which has support for postgres as a backend. This configuration is **not supported** by lemmy-ansible for the moment.
+
+#### Steps
+
+- `git pull && git checkout 1.4.0`
+- Read [Pictrs' Configuration Changes](https://git.asonix.dog/asonix/pict-rs/#configuration-updates)
+- Amend your `vars.yml` file to respect the new changes
+  - Optional: Add: `PICTRS__UPGRADE__CONCURRENCY` with a value between 32 and 512 depending on how much RAM/CPU you want to dedicate to the upgrade process. A value of 32 used about 2.5GB of RAM for the migration.
+  - Optional: Curl `/internal/prepare_upgrade` to minimise downtime while upgrading. See [the instructions below](https://github.com/LemmyNet/lemmy-ansible#update-your-pict-rs-sled-database-optional) or the official documentation [here](https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint)
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+
 ### Upgrading to 1.3.1 (Lemmy 0.19.1)
 
 This is a very minor release but fixes issues relating to federation as part of the Lemmy update.
@@ -101,7 +114,7 @@ This is a very minor release but fixes issues relating to federation as part of 
 - `git pull && git checkout 1.3.1`
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
-### Upgrading to 1.3.0 (Lemmy 0.19.0 & pictrs-0.4.7)
+### Upgrading to 1.3.0 (Lemmy 0.19.0 & Pict-rs 0.4.7)
 
 This is a major change and has required reading! tl;dr
 
