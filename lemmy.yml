@@ -75,12 +75,6 @@
           - ansible_distribution in ['Debian', 'Ubuntu']
         fail_msg: "This playbook requires Debian or Ubuntu on the target server"
 
-    - name: Install aptitude
-      ansible.builtin.apt:
-        name: aptitude
-        state: present
-        update_cache: true
-
     - name: Install dependencies
       ansible.builtin.apt:
         state: present
