@@ -1,0 +1,57 @@
+postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}" # noqa yaml[line-length]:w
+
+# Next two only relevant if pictrs_safety == True
+pictrs_safety_worker_auth: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}" # noqa yaml[line-length]
+pictrs_safety_secret: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_secret.psk chars=ascii_letters,digits length=80') }}" # noqa yaml[line-length]
+
+# You can set any pict-rs environmental variables here. They will populate the templates/docker-compose.yml file.
+# https://git.asonix.dog/asonix/pict-rs
+pictrs_env_vars:
+  - PICTRS__SERVER__API_KEY: "{{ postgres_password }}"
+  - PICTRS__MEDIA__ANIMATION__MAX_WIDTH: 256
+  - PICTRS__MEDIA__ANIMATION__MAX_HEIGHT: 256
+  - PICTRS__MEDIA__ANIMATION__MAX_AREA: 65536
+  - PICTRS__MEDIA__ANIMATION__MAX_FRAME_COUNT: 400
+  - PICTRS__MEDIA__VIDEO__ENABLE: "True"
+  - PICTRS__MEDIA__VIDEO__MAX_FILE_SIZE: 20
+  - PICTRS_OPENTELEMETRY_URL: http://otel:4137
+  - RUST_LOG: info
+  - RUST_BACKTRACE: full
+# Edit these for Object Storage
+#  - PICTRS__STORE__TYPE: object_storage
+#  - PICTRS__STORE__ENDPOINT: '<S3 endpoint>'
+#  - PICTRS__STORE__BUCKET_NAME: '<bucket name>'
+#  - PICTRS__STORE__REGION: '<region>'
+#  - PICTRS__STORE__USE_PATH_STYLE: false
+#  - PICTRS__STORE__ACCESS_KEY: '<access key>'
+#  - PICTRS__STORE__SECRET_KEY: '<secret key>'
+# Edit these if you use postgres for your pictrs backend
+#  - PICTRS__OLD_REPO__PATH=/mnt/sled-repo
+#  - PICTRS__REPO__TYPE=postgres
+#  - PICTRS__REPO__URL=postgres://user:password@host:5432/db
+
+postgres_env_vars:
+  - POSTGRES_USER: lemmy
+  - POSTGRES_PASSWORD: "{{ postgres_password }}"
+  - POSTGRES_DB: lemmy
+  - POSTGRES_INITDB_ARGS: "--username=lemmy"
+
+lemmy_env_vars:
+  - RUST_LOG: warn
+
+lemmyui_env_vars:
+  - LEMMY_UI_LEMMY_INTERNAL_HOST: lemmy:8536
+  - LEMMY_UI_LEMMY_EXTERNAL_HOST: "{{ domain }}"
+  - LEMMY_UI_HTTPS: true
+
+postfix_env_vars:
+  - POSTFIX_myhostname: "{{ domain }}"
+
+pictrs_safety_env_vars:
+  # Use this in your fedi-safety to allow your worker to authenticate to pictrs-safety
+  - FEDIVERSE_SAFETY_WORKER_AUTH: "{{ pictrs_safety_worker_auth }}"
+  - FEDIVERSE_SAFETY_IMGDIR: "/tmp/images"
+  - USE_SQLITE: 1
+  - secret_key: "{{ pictrs_safety_secret }}"
+  - SCAN_BYPASS_THRESHOLD: 10
+  - MISSING_WORKER_THRESHOLD: 5
