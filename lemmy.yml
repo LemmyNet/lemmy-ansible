@@ -54,8 +54,9 @@
       become: false
 
     - name: Install python for Ansible
+      become: false
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
-      ansible.builtin.raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
+      ansible.builtin.raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools); exit
       args:
         executable: /bin/bash
       register: output
@@ -76,6 +77,7 @@
         fail_msg: "This playbook requires Debian or Ubuntu on the target server"
 
     - name: Install dependencies
+      become: yes
       ansible.builtin.apt:
         state: present
         update_cache: true
@@ -93,6 +95,7 @@
           - "python3-setuptools"
 
     - name: Configure Docker apt repo for Ubuntu < 22.04
+      become: yes
       when: ansible_distribution == 'Ubuntu' and ansible_distribution_version < '22.04'
       block:
         - name: Add Docker GPG apt Key
@@ -132,6 +135,7 @@
             state: present
 
     - name: Install docker-ce and docker-compose
+      become: yes
       ansible.builtin.apt:
         name:
           - docker-ce
@@ -140,12 +144,14 @@
         update_cache: true
 
     - name: Copy docker config
+      become: yes
       ansible.builtin.copy:
         src: files/docker-daemon.json
         dest: /etc/docker/daemon.json
         mode: "0644"
 
     - name: Request initial letsencrypt certificate
+      become: yes
       ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
       args:
         creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
@@ -166,9 +172,9 @@
 
     - name: Deploy configuration files
       block:
-        - name: Generate random port for lemmy service
+        - name: Generate port 21732 for lemmy service
           ansible.builtin.set_fact:
-            lemmy_port: "{{ 32767 | random(start=1024) }}"
+            lemmy_port: 21732
 
         - name: Distribute nginx proxy_params configuration
           ansible.builtin.copy:
@@ -184,6 +190,7 @@
             src: "{{ item.src }}"
             dest: "{{ item.dest }}"
             mode: "{{ item.mode }}"
+          become: yes
           loop:
             - src: "templates/docker-compose.yml"
               dest: "{{ lemmy_base_dir }}/{{ domain }}/docker-compose.yml"
@@ -226,6 +233,7 @@
             mode: "0600"
             owner: "1000"
             group: "1000"
+          become: yes
 
         - name: Add the customPostgresql.conf
           ansible.builtin.template:
@@ -234,6 +242,7 @@
             mode: "0644"
             owner: root
             group: root
+          become: yes
 
     - name: Enable and start docker service
       ansible.builtin.systemd:
@@ -248,14 +257,26 @@
     #     register: shell_output
     # - debug: var=shell_output
 
+          #- name: Upgrade pip
+      #  pip:
+        #    name: pip
+          #    state: latest
+
+          #- name: Install docker-compose python package
+      #  ansible.builtin.pip:
+        #    name: docker-compose
+          #    version: 1.19.0
+
     - name: Start docker-compose
       community.docker.docker_compose:
         project_src: "{{ lemmy_base_dir }}/{{ domain }}"
         state: present
         pull: true
         remove_orphans: true
+      become: yes
 
     - name: Certbot renewal cronjob
+      become: yes
       ansible.builtin.cron:
         special_time: daily
         name: certbot-renew-lemmy

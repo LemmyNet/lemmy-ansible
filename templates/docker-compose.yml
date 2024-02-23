@@ -44,6 +44,11 @@ services:
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
+    healthcheck:
+      test: "curl -ILSs http://localhost:{{ lemmy_port }}/"
+      interval: 60s
+      timeout: 10s
+      retries: 3
     environment:
 {% if lemmyui_env_vars is defined and lemmyui_env_vars|length > 0 %}
 {% for item in lemmyui_env_vars %}
@@ -81,10 +86,6 @@ services:
       - ./volumes/pictrs:/mnt:Z
     restart: always
     logging: *default-logging
-    deploy:
-      resources:
-        limits:
-          memory: 690m
 
   postgres:
     image: docker.io/postgres:15-alpine
