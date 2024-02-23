@@ -1,6 +1,7 @@
 ---
 - name: Install Lemmy
   hosts: all
+  become: yes
 
   # Install python if required
   # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
