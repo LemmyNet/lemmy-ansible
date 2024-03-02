@@ -239,8 +239,6 @@
       tags:
         - nginx
 
-
-
     # TODO: Check if this is necessary with EL & podman
     # - name: Copy docker config
     #   ansible.builtin.copy:
