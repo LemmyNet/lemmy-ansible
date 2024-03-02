@@ -129,6 +129,17 @@
       tags:
         - firewalld
 
+    - name: Start and enable nginx.service
+      ansible.builtin.systemd:
+        name: nginx.service
+        state: started
+        enabled: true
+      tags:
+        - certbot
+        - certbot_initial
+        - nginx
+        - ssl
+
     # TODO: certbot logic needs to be re-worked
     - name: Request initial letsencrypt certificate
       ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
