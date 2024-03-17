@@ -13,12 +13,6 @@
         fail_msg: "This playbook requires Ansible 2.11.0 or higher"
       become: false
 
-    - name: Disable SELinux
-      ansible.posix.selinux:
-        state: disabled
-      tags:
-        - selinux
-
     # This is not needed for this playbook as it predates its existence
     # But we're keeping it for funsies :)
     - name: Check lemmy_base_dir
@@ -134,6 +128,15 @@
       when: "'firewalld.service' in ansible_facts.services and ansible_facts.services['firewalld.service'].state == 'running'"
       tags:
         - firewalld
+
+    - name: Adjust SELinux to allow HTTPD scripts and modules to connect to the network
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
+      tags:
+        - nginx
+        - selinux
 
     - name: Start and enable nginx.service
       ansible.builtin.systemd:
