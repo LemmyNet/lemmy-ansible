@@ -129,6 +129,15 @@
       tags:
         - firewalld
 
+    - name: Adjust SELinux to allow HTTPD scripts and modules to connect to the network
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
+      tags:
+        - nginx
+        - selinux
+
     - name: Start and enable nginx.service
       ansible.builtin.systemd:
         name: nginx.service

@@ -53,7 +53,7 @@ services:
 {% endfor %}
 {% endif %}
     volumes:
-      - ./volumes/lemmy-ui/extra_themes:/app/extra_themes
+      - ./volumes/lemmy-ui/extra_themes:/app/extra_themes:Z
     depends_on:
       - lemmy
     restart: always
@@ -99,7 +99,7 @@ services:
 {% endif %}
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data:Z
-      - ./customPostgresql.conf:/etc/postgresql.conf
+      - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf
     shm_size: 1g

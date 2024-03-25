@@ -54,3 +54,6 @@ pictrs_safety_env_vars:
   - secret_key: "{{ pictrs_safety_secret }}"
   - SCAN_BYPASS_THRESHOLD: 10
   - MISSING_WORKER_THRESHOLD: 5
+
+# docker-compose default resolver is 127.0.0.11 while podman-compose is 10.89.0.1
+nginx_internal_resolver: "{{ '127.0.0.11' if ansible_facts['os_family'] != 'RedHat' else '10.89.0.1' }}"
