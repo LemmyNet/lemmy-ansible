@@ -100,7 +100,7 @@ services:
       - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf
-    shm_size: 1g
+    shm_size: {{ postgres_shm }}
     logging: *default-logging
 
   postfix:
