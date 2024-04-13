@@ -93,7 +93,7 @@ Since version `1.1.0` we no longer default to using `main` but use tags to make 
 With every new release all migration steps shall be written below so make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
 
 Since version `1.5.0` we no longer pollute the readme with upgrading instructions.
-Please see the dedicated [UPGRADING](UPGRADING) file for all future upgrades.
+Please see the dedicated [UPGRADING](UPGRADING.md) file for all future upgrades.
 
 ## Migrating your existing install to use this deploy
 
