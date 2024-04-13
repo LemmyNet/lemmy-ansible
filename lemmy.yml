@@ -170,7 +170,7 @@
       block:
         - name: Generate random port for lemmy service
           ansible.builtin.set_fact:
-            lemmy_port: "{{ 32767 | random(start=1024) }}"
+            lemmy_port: "{{ lemmy_web_port | default(32767 | random(start=1024)) }}"
 
         - name: Distribute nginx proxy_params configuration
           ansible.builtin.copy:
