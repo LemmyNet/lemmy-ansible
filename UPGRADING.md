@@ -1,7 +1,7 @@
 # Upgrading
 
-This file shows all steps in how to upgrade between "versions" of the lemmy-ansible repository. 
-While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in time we make a release, it does not mean that you cannot mix-and-match versions. (ie; you can run pictrs 0.5.10 with Lemmy 0.19.3). 
+This file shows all steps in how to upgrade between "versions" of the lemmy-ansible repository.
+While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in time we make a release, it does not mean that you cannot mix-and-match versions. (ie; you can run pictrs 0.5.10 with Lemmy 0.19.3).
 While you are not strangle-held into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
 
 ### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5.10, postgres 16)
@@ -13,23 +13,24 @@ This is a major release which requires you to update postgres to v16. Once that 
 #### Postgres Upgrade from v15 to v16
 
 You need to migrate from v15 to v16. The Lemmy devs have already done this from v12 to v15, and I've performed it myself without issues. The crux of the process is to dump your database, swap postgres container versions, delete your old database volume folder and import from the backup.
-There will be downtime, and it is a little scary as you will be deleting the `volumes/postgres` folder. The only backup you have during this time is the `15_16_dump.sql`. 
-On my reference instance (4 CPU, 8GB Memory, 30GB volumes/postgres), it took 10 minutes to dump the backup, and another 20 minutes to import it again. The biggest time sink when importing is when it recreates the indexes. 
+There will be downtime, and it is a little scary as you will be deleting the `volumes/postgres` folder. The only backup you have during this time is the `15_16_dump.sql`.
+On my reference instance (4 CPU, 8GB Memory, 30GB volumes/postgres), it took 10 minutes to dump the backup, and another 20 minutes to import it again. The biggest time sink when importing is when it recreates the indexes.
 If you have a faster system and no noisy neighbours you could get the dump and import to be below 20 minutes, but I'd aim for a 60 minute maintenace window.
 
 - The script you need to download and push onto your server: [postgres_15_to_16_upgrade.sh](https://github.com/LemmyNet/lemmy/blob/main/scripts/postgres_15_to_16_upgrade.sh). This script assumes:
   1. That it will be run in the same location as your docker-compose.yml file. (Possibly under `/opt/lemmy/{{ domain }}`)
   2. You have at least 50% storage free available. (As you will be basically duplicating your database).
   3. Use `sudo` & `docker compose`
-  4. Your regular command 
+  4. Your regular command
 - If you do not have enough space please create some if possible, or modify the script to save the `15_16.sql` file onto a drive which does have space.
 - If you do not have sudo or use sudo, please modify the commands in the script appropriately. (ie: if running as root, you can remove all of sudo from the file)
 - Test that `sudo docker-compose exec -T postgres pg_dumpall -c -U lemmy > 15_16_dump.sql` works without issues.
   - This tests to ensure that you can create a backup file. Incase something goes wrong, as long as this file is safe then you won't have any problems.
 - TODO: More things?
-- 
+-
 
 #### Steps
+
 - `git checkout main && git pull && git checkout 1.5.0`
 - Check the diff between the two versions to see the changes our examples:
   - examples/customPostgresql.conf: We added a new autoexplain & stats feature, & enabled jit after v16 upgrade. \
