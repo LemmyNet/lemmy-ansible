@@ -146,7 +146,7 @@
         mode: "0644"
 
     - name: Request initial letsencrypt certificate
-      ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
+      ansible.builtin.command: certbot certonly --nginx --agree-tos --cert-name '{{ domain }}' -d '{{ domain }}' -d 'www.{{ domain }}' -d 'lemmy-federate.com' -d 'v.{{ domain }}' -d 'm.{{ domain }}' -d 'p.{{ domain }}' -d 'a.{{ domain }}' -m '{{ letsencrypt_contact_email }}'
       args:
         creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
 
@@ -193,6 +193,9 @@
               mode: "0644"
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{ domain }}.conf"
+              mode: "0644"
+            - src: "inventory/host_vars/{{domain}}/nginx_custom.conf"
+              dest: "/etc/nginx/conf.d/{{domain}}.conf"
               mode: "0644"
           notify: Reload nginx
           vars:
@@ -260,4 +263,4 @@
         special_time: daily
         name: certbot-renew-lemmy
         user: root
-        job: "certbot certonly --nginx --cert-name '{{ domain }}' -d '{{ domain }}' --deploy-hook 'nginx -s reload'"
+        job: "certbot certonly --nginx --cert-name '{{ domain }}' -d '{{ domain }}' -d 'www.{{ domain }}' -d 'lemmy-federate.com' -d 'v.{{ domain }}' -d 'm.{{ domain }}' -d 'p.{{ domain }}' -d 'a.{{ domain }}' --deploy-hook 'nginx -s reload'"

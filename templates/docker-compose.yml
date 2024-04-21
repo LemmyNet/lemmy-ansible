@@ -60,7 +60,7 @@ services:
     logging: *default-logging
 
   pictrs:
-    image: docker.io/asonix/pictrs:0.5.4
+    image: docker.io/asonix/pictrs:0.5.13
     # this needs to match the pictrs url in lemmy.hjson
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
@@ -84,11 +84,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 690m
+          memory: 4096M
 
   postgres:
     image: docker.io/postgres:15-alpine
     hostname: postgres
+    ports:
+      - "5432:5432"
     environment:
 {% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
 {% for item in postgres_env_vars %}
@@ -102,39 +104,79 @@ services:
       - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf
-    shm_size: 1g
+    shm_size: 4g
     logging: *default-logging
 
-  postfix:
-    image: docker.io/mwader/postfix-relay
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-{% if postfix_env_vars is defined and postfix_env_vars|length > 0 %}
-{% for item in postfix_env_vars %}
-{% for key, value in item.items() %}
-      - {{ key }}={{ value }}
-{% endfor %}
-{% endfor %}
-{% endif %}
-    restart: "always"
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=1600
     logging: *default-logging
 
-{% if pictrs_safety is defined and pictrs_safety|bool == true %}
-  pictrs-safety:
-    image: ghcr.io/db0/pictrs-safety:v1.2.2
-    hostname: pictrs-safety
-    environment:
-{% if pictrs_safety_env_vars is defined and pictrs_safety_env_vars|length > 0 %}
-{% for item in pictrs_safety_env_vars %}
-{% for key, value in item.items() %}
-      - {{ key }}={{ value }}
-{% endfor %}
-{% endfor %}
-{% endif %}
+  voyager:
+    image: ghcr.io/aeharding/voyager
     ports:
-      - "14051:14051"
-    user: 991:991
+      - "5314:5314"
+    environment:
+      - CUSTOM_LEMMY_SERVERS={{ domain }}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: always
     logging: *default-logging
-    depends_on:
-      - pictrs
+
+  mlmym:
+    image: ghcr.io/rystaf/mlmym:latest
+    ports:
+      - "5315:8080"
+    environment:
+      - LEMMY_DOMAIN={{ domain }}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: always
+    logging: *default-logging
+
+  photon:
+    image: ghcr.io/xyphyn/photon
+    ports:
+      - "5316:3000"
+    environment:
+      - PUBLIC_INSTANCE_URL={{ domain }}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: always
+    logging: *default-logging
+
+  alexandrite:
+    image: ghcr.io/sheodox/alexandrite
+    ports:
+      - "5317:3000"
+    environment:
+      - ALEXANDRITE_DEFAULT_INSTANCE={{ domain }}
+      - ALEXANDRITE_FORCE_INSTANCE={{ domain }}
+      - ALEXANDRITE_WELCOME_INSTANCE_HELP=false
+      - ALEXANDRITE_WELCOME_LEMMY_HELP=false
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: always
+    logging: *default-logging
+
+  lemmy_federate:
+    image: ghcr.io/ismailkarsli/lemmy-federate
+    ports:
+      - "52312:3000"
+    environment:
+{% if lemmy_federate_env_vars is defined and lemmy_federate_env_vars|length > 0 %}
+{% for item in lemmy_federate_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
 {% endif %}
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    logging: *default-logging
