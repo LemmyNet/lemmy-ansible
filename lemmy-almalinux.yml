@@ -96,6 +96,7 @@
         state: present
         name:
           - certbot
+          - cronie
           - curl
           - nginx
           - podman
