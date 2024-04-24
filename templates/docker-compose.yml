@@ -180,3 +180,12 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     logging: *default-logging
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    logging: *default-logging
