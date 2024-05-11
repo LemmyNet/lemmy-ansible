@@ -24,6 +24,7 @@ steps:
       - apk add pipx
       - pipx install --include-deps ansible ansible-lint
       - export PATH=/root/.local/bin:$${PATH}
+      - ansible-galaxy collection install --requirements-file requirements.yml
       - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml examples/vars.yml
     when:
       - event: pull_request
