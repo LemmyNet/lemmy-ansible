@@ -23,7 +23,8 @@ steps:
     commands:
       - export PATH=/root/.local/bin:$${PATH}
       - apk add pipx
-      - pipx install --include-deps ansible ansible-lint
+      - pipx install --include-deps ansible
+      - pipx inject --include-deps ansible ansible-lint
       - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml examples/vars.yml
     when:
       - event: pull_request
