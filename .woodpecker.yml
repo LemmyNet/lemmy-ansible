@@ -10,8 +10,8 @@ steps:
     image: alpine:3
     commands:
       - apk add pipx
-      - pipx ensurepath
       - pipx install --include-deps ansible
+      - export PATH=/root/.local/bin:$${PATH}
       - ansible-playbook lemmy.yml --syntax-check
       - ansible-playbook lemmy-almalinux.yml --syntax-check
       - ansible-playbook uninstall.yml --syntax-check
