@@ -9,7 +9,8 @@ steps:
   check_ansible_format:
     image: alpine:3
     commands:
-      - apk add ansible
+      - apk add pipx
+      - pipx install --include-deps ansible
       - ansible-playbook lemmy.yml --syntax-check
       - ansible-playbook lemmy-almalinux.yml --syntax-check
       - ansible-playbook uninstall.yml --syntax-check
