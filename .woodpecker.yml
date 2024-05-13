@@ -9,9 +9,9 @@ steps:
   check_ansible_format:
     image: alpine:3
     commands:
+      - export PATH=/root/.local/bin:$${PATH}
       - apk add pipx
       - pipx install --include-deps ansible
-      - export PATH=/root/.local/bin:$${PATH}
       - ansible-playbook lemmy.yml --syntax-check
       - ansible-playbook lemmy-almalinux.yml --syntax-check
       - ansible-playbook uninstall.yml --syntax-check
@@ -21,9 +21,9 @@ steps:
   ansible_lint:
     image: alpine:3
     commands:
+      - export PATH=/root/.local/bin:$${PATH}
       - apk add pipx
       - pipx install --include-deps ansible ansible-lint
-      - export PATH=/root/.local/bin:$${PATH}
       - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml examples/vars.yml
     when:
       - event: pull_request
