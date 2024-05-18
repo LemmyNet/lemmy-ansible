@@ -247,7 +247,7 @@
       community.docker.docker_compose_v2:
         project_src: "{{ lemmy_base_dir }}/{{ domain }}"
         state: present
-        pull: true
+        pull: always
         remove_orphans: true
 
     - name: Certbot renewal cronjob
