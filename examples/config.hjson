@@ -3,8 +3,10 @@
   # https://join-lemmy.org/docs/en/administration/configuration.html
 
   database: {
-    uri: "postgresql://lemmy:{{ postgres_password }}@postgres/lemmy"
-    pool_size: "10"
+    host: postgres
+    password: "{{ postgres_password }}"
+    # Alternative way:
+    #uri: "postgresql://lemmy:{{ postgres_password }}@postgres/lemmy"
   }
   hostname: "{{ domain }}"
   pictrs: {
