@@ -312,10 +312,10 @@
     # - debug: var=shell_output
 
     - name: Start docker-compose
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ lemmy_base_dir }}/{{ domain }}"
         state: present
-        pull: true
+        pull: always
         remove_orphans: true
       tags:
         - docker
