@@ -92,9 +92,8 @@ If you wish to see another distribution on the list, please test on the latest c
 Please see the dedicated [UPGRADING](UPGRADING.md) document for all upgrade processess
 
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
-With every new release all migration steps shall be written in the [UPGRADING](UPGRADING.md) document. 
+With every new release all migration steps shall be written in the [UPGRADING](UPGRADING.md) document.
 When updating please make sure you check out the [Lemmy Releases Changelog](https://github.com/LemmyNet/lemmy/blob/main/RELEASES.md) to see if there are any config changes with the releases since your last read.
-
 
 ## Migrating your existing install to use this deploy
 
