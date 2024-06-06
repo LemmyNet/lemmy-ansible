@@ -1,33 +1,46 @@
 # Upgrading
 
 This file shows all steps in how to upgrade between "versions" of the lemmy-ansible repository.
-While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in time we make a release, it does not mean that you cannot mix-and-match versions. (ie; you can run pictrs 0.5.10 with Lemmy 0.19.3).
-While you are not strangle-held into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
 
-### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5.10, postgres 16)
+While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in time we make a release, it does not mean that you cannot mix-and-match versions. (ie; you can run pictrs 0.5.10 with Lemmy 0.19.3).
+
+While you are not forced into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
+
+### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5, postgres 16)
 
 > **DO NOT RUN IT WITHOUT READING THIS WHOLE SECTION**
 
-This is a major release which requires you to update postgres to v16. Once that is done proceed with your regular deployments.
+This is a major release which requires you to update postgres to v16, and pictrs to v0.5. Once that is done proceed with your regular deployments.
 
 #### Postgres Upgrade from v15 to v16
 
-You need to migrate from v15 to v16. The Lemmy devs have already done this from v12 to v15, and I've performed it myself without issues. The crux of the process is to dump your database, swap postgres container versions, delete your old database volume folder and import from the backup.
-There will be downtime, and it is a little scary as you will be deleting the `volumes/postgres` folder. The only backup you have during this time is the `15_16_dump.sql`.
+You need to migrate from postgres v15 to v16. A helper script is provided, that dumps your database, swaps postgres container versions,
+
+There will be downtime, and it is a little scary as you will be deleting the `volumes/postgres` folder. The only backup you have during this time will be the `15_16_dump.sql`, created by the helper script.
+
 On my reference instance (4 CPU, 8GB Memory, 30GB volumes/postgres), it took 10 minutes to dump the backup, and another 20 minutes to import it again. The biggest time sink when importing is when it recreates the indexes.
 If you have a faster system and no noisy neighbours you could get the dump and import to be below 20 minutes, but I'd aim for a 60 minute maintenace window.
 
-- The script you need to download and push onto your server: [postgres_15_to_16_upgrade.sh](https://github.com/LemmyNet/lemmy/blob/main/scripts/postgres_15_to_16_upgrade.sh). This script assumes:
-  1. That it will be run in the same location as your docker-compose.yml file. (Possibly under `/opt/lemmy/{{ domain }}`)
-  2. You have at least 50% storage free available. (As you will be basically duplicating your database).
-  3. Use `sudo` & `docker compose`
-  4. Your regular command
-- If you do not have enough space please create some if possible, or modify the script to save the `15_16.sql` file onto a drive which does have space.
-- If you do not have sudo or use sudo, please modify the commands in the script appropriately. (ie: if running as root, you can remove all of sudo from the file)
-- Test that `sudo docker-compose exec -T postgres pg_dumpall -c -U lemmy > 15_16_dump.sql` works without issues.
-  - This tests to ensure that you can create a backup file. Incase something goes wrong, as long as this file is safe then you won't have any problems.
-- TODO: More things?
--
+- The script you need to download and push onto your server: [postgres_15_to_16_upgrade.sh](https://github.com/LemmyNet/lemmy/blob/main/scripts/postgres_15_to_16_upgrade.sh).
+
+```
+# Go to your lemmy directory with the docker-compose.yml
+cd /srv/lemmy/{my_lemmy_domain}/
+
+# Download the upgrade script
+sudo wget -O postgres_15_to_16_upgrade.sh "https://raw.githubusercontent.com/LemmyNet/lemmy/main/scripts/postgres_15_to_16_upgrade.sh"
+
+# Run the script. Be aware that it may take > 20 minutes
+sudo sh postgres_15_to_16_upgrade.sh
+```
+
+- This also creates a backup file of your old database, called `15_16_dump.sql`. **Do not delete this file** until you are sure that everything is working correctly, for at least a few days.
+
+#### Pictrs 0.4 -> 0.5 Upgrade
+
+`0.19.4` also adds functionality only supported by pictrs version `0.5`. Follow the [v0.4 -> v0.5 migration guide](https://git.asonix.dog/asonix/pict-rs.git#0-4-to-0-5-migration-guide) to make sure that your pictrs env vars in `vars.yml` are correct.
+
+There are more detailed pictrs upgrade instructions below.
 
 #### Steps
 
@@ -101,8 +114,8 @@ This is only Optional, and takes a shorter amount of time than the Lemmy databas
 
 #### Optional Module(s)
 
-Our first optional module is [pictrs-safety](https://github.com/db0/pictrs-safety). See the repo linked for more information, especially for integration with pictrs (which is what it is for) Thanks to @db0 for their contribution.  
-See the `pictrs_safety_env_vars` under `examples/vars.yml` for relevant options (and the two password variables)  
+Our first optional module is [pictrs-safety](https://github.com/db0/pictrs-safety). See the repo linked for more information, especially for integration with pictrs (which is what it is for) Thanks to @db0 for their contribution.
+See the `pictrs_safety_env_vars` under `examples/vars.yml` for relevant options (and the two password variables)
 To enable this module to be used you must ADD `pictrs_safety: true` to your `vars.yml`.
 
 ### Upgrading to 1.2.1 (Lemmy 0.18.5)
@@ -116,8 +129,11 @@ This is a minor change which fixes the issue with the Postgres container not usi
 - Add the following block to your current customPostgres file.
 
 ```
+
 # Listen beyond localhost
-listen_addresses = '*'
+
+listen_addresses = '\*'
+
 ```
 
 ### Upgrading to 1.2.0 (Lemmy 0.18.5)
