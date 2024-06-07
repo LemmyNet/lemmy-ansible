@@ -14,9 +14,9 @@ This is a major release which requires you to update postgres to v16, and pictrs
 
 #### Postgres Upgrade from v15 to v16
 
-You need to migrate from postgres v15 to v16. A helper script is provided, that dumps your database, swaps postgres container versions,
+You need to migrate from postgres v15 to v16. A helper script is provided, that dumps your database, swaps postgres container versions, starts them, and then imports the backup into the new container.
 
-There will be downtime, and it is a little scary as you will be deleting the `volumes/postgres` folder. The only backup you have during this time will be the `15_16_dump.sql`, created by the helper script.
+There will be downtime, and it is a little scary as it will be deleting the `volumes/postgres` folder. The only backup you have during this time will be the `15_16_dump.sql`, created by the helper script.
 
 On my reference instance (4 CPU, 8GB Memory, 30GB volumes/postgres), it took 10 minutes to dump the backup, and another 20 minutes to import it again. The biggest time sink when importing is when it recreates the indexes.
 If you have a faster system and no noisy neighbours you could get the dump and import to be below 20 minutes, but I'd aim for a 60 minute maintenace window.
