@@ -5,6 +5,8 @@
   database: {
     host: postgres
     password: "{{ postgres_password }}"
+    # Alternative way:
+    #uri: "postgresql://lemmy:{{ postgres_password }}@postgres/lemmy"
   }
   hostname: "{{ domain }}"
   pictrs: {

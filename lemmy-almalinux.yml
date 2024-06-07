@@ -173,12 +173,14 @@
           owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
           owner: "991" # Matches docker-compose UID in docker-compose.yml
+        - path: "/var/cache/lemmy/{{ domain }}/"
+          owner: "www-data"
       tags:
         - directories
 
     - name: Set lemmy_port fact
       ansible.builtin.set_fact:
-        lemmy_port: "{{ 32767 | random(start=1024) }}"
+        lemmy_port: "{{ lemmy_web_port | default(32767 | random(start=1024)) }}"
       tags:
         - always
 

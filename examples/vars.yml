@@ -35,6 +35,8 @@ postgres_env_vars:
   - POSTGRES_PASSWORD: "{{ postgres_password }}"
   - POSTGRES_DB: lemmy
 
+postgres_shm: 2g
+
 lemmy_env_vars:
   - RUST_LOG: warn
 

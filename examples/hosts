@@ -9,8 +9,11 @@
 #                                if you are upgrading from a previous version, set this to `/lemmy`
 # - `lemmy_version`: <Optional> The back end version.
 # - `lemmy_ui_version`: <Optional> overrides the front end version.
-# - `pictrs_safety`: <Optional> If true, a docker container for pictrs-safety will be deployed and pict-rs will be configured to validate images through it. You will also need to set up a fedi-safety worker to validate the images.
-example.com  ansible_user=root domain=example.com  letsencrypt_contact_email=your@email.com  lemmy_base_dir=/srv/lemmy pictrs_safety=false
+# - `pictrs_safety`: <Optional> If true, a docker container for pictrs-safety will be deployed and pict-rs
+#                   will be configured to validate images through it. You will also need to set up a 
+#                   fedi-safety worker to validate the images.
+# - `lemmy_web_port`: <Optional> Sets the host->docker nginx upstream port to allow a static host nginx configuration
+example.com  ansible_user=root domain=example.com  letsencrypt_contact_email=your@email.com  lemmy_base_dir=/srv/lemmy pictrs_safety=false lemmy_web_port=9633
 
 [all:vars]
 ansible_connection=ssh

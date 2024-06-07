@@ -205,6 +205,8 @@
           owner: "root"
         - path: "{{ lemmy_base_dir }}/{{ domain }}/volumes/pictrs/"
           owner: "991"
+        - path: "/var/cache/lemmy/{{ domain }}/"
+          owner: "www-data"
       tags:
         - directories
 
@@ -212,9 +214,7 @@
       block:
         - name: Generate random port for lemmy service
           ansible.builtin.set_fact:
-            lemmy_port: "{{ 32767 | random(start=1024) }}"
-          tags:
-            - always
+            lemmy_port: "{{ lemmy_web_port | default(32767 | random(start=1024)) }}"
 
         - name: Distribute nginx proxy_params configuration
           ansible.builtin.copy:
@@ -303,13 +303,6 @@
         state: started
       tags:
         - docker
-
-    # - name: Change the working directory to /opt
-    #   ansible.builtin.shell:
-    #     cmd: find .                    # To list files under /opt directory
-    #     chdir: /opt                    # changes to /opt directory
-    #     register: shell_output
-    # - debug: var=shell_output
 
     - name: Start docker-compose
       community.docker.docker_compose_v2:

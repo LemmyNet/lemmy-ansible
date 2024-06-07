@@ -1,5 +1,3 @@
-version: "3.7"
-
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -60,7 +58,7 @@ services:
     logging: *default-logging
 
   pictrs:
-    image: docker.io/asonix/pictrs:0.5.4
+    image: docker.io/asonix/pictrs:0.5
     # this needs to match the pictrs url in lemmy.hjson
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
@@ -81,13 +79,9 @@ services:
       - ./volumes/pictrs:/mnt:Z
     restart: always
     logging: *default-logging
-    deploy:
-      resources:
-        limits:
-          memory: 690m
 
   postgres:
-    image: docker.io/postgres:15-alpine
+    image: docker.io/postgres:16-alpine
     hostname: postgres
     environment:
 {% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
@@ -102,7 +96,7 @@ services:
       - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf
-    shm_size: 1g
+    shm_size: {{ postgres_shm }}
     logging: *default-logging
 
   postfix:
