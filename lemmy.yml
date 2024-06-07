@@ -207,6 +207,8 @@
           owner: "991"
         - path: "/var/cache/lemmy/{{ domain }}/"
           owner: "www-data"
+      tags:
+        - directories
 
     - name: Deploy configuration files
       block:
