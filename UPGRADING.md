@@ -50,7 +50,6 @@ There are more detailed pictrs upgrade instructions below.
     - On low memory systems, you might want to disable jit still: `jit=0`
   - examples/hosts: Add `lemmy_web_port` to have a dedicated port
   - examples/vars.yml: Add `postgres_shm` to have the correct shared memory for postgres
-  - examples/config.hjson: Changes to the new `uri` format (and a better default for lemmy pool size)
 - Confirm you are already running Postgres v16
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
