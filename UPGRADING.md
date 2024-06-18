@@ -6,6 +6,13 @@ While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in tim
 
 While you are not forced into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
 
+### Upgrading to 1.5.1 (Lemmy 0.19.5)
+
+#### Steps
+
+- `git pull && git checkout 1.5.1`
+- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+
 ### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5, postgres 16)
 
 > **DO NOT RUN IT WITHOUT READING THIS WHOLE SECTION**
