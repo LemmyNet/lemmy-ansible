@@ -36,6 +36,53 @@ services:
 {% endif %}
     volumes:
       - ./lemmy.hjson:/config/config.hjson:Z
+    command:
+      - "--disable-scheduled-tasks"
+      - "--disable-activity-sending"
+    depends_on:
+      - postgres
+      - pictrs
+
+  lemmy-schedule:
+    image: {{ lemmy_docker_image }}
+    hostname: lemmy-schedule
+    restart: always
+    logging: *default-logging
+    environment:
+{% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
+{% for item in lemmy_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+    volumes:
+      - ./lemmy.hjson:/config/config.hjson:Z
+    command:
+      - "--disable-activity-sending"
+      - "--disable-http-server"
+    depends_on:
+      - postgres
+      - pictrs
+
+  lemmy-federate:
+    image: {{ lemmy_docker_image }}
+    hostname: lemmy-federate
+    restart: always
+    logging: *default-logging
+    environment:
+{% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
+{% for item in lemmy_env_vars %}
+{% for key, value in item.items() %}
+      - {{ key }}={{ value }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+    volumes:
+      - ./lemmy.hjson:/config/config.hjson:Z
+    command:
+      - "--disable-scheduled-tasks"
+      - "--disable-http-server"
     depends_on:
       - postgres
       - pictrs
