@@ -1,4 +1,4 @@
-postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}" # noqa yaml[line-length]:w
+postgres_password: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/postgres.psk chars=ascii_letters,digits') }}" # noqa yaml[line-length]
 
 # Next two only relevant if pictrs_safety == True
 pictrs_safety_worker_auth: "{{ lookup('password', 'inventory/host_vars/{{ domain }}/passwords/pictrs_safety_worker_auth.psk chars=ascii_letters,digits length=15') }}" # noqa yaml[line-length]
