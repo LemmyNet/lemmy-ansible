@@ -8,9 +8,7 @@ services:
   proxy:
     image: docker.io/library/nginx 
     ports:
-      # actual and only port facing any connection from outside
-      # Note, change the left number if port 1236 is already in use on your system
-      # You could use port 80 if you won't use a reverse proxy
+      # Note, change lemmy_port in vars.yml if it is already in use on your system
       - "127.0.0.1:{{ lemmy_port }}:8536"
     volumes:
       - ./nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
@@ -36,53 +34,6 @@ services:
 {% endif %}
     volumes:
       - ./lemmy.hjson:/config/config.hjson:Z
-    command:
-      - "--disable-scheduled-tasks"
-      - "--disable-activity-sending"
-    depends_on:
-      - postgres
-      - pictrs
-
-  lemmy-schedule:
-    image: {{ lemmy_docker_image }}
-    hostname: lemmy-schedule
-    restart: always
-    logging: *default-logging
-    environment:
-{% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
-{% for item in lemmy_env_vars %}
-{% for key, value in item.items() %}
-      - {{ key }}={{ value }}
-{% endfor %}
-{% endfor %}
-{% endif %}
-    volumes:
-      - ./lemmy.hjson:/config/config.hjson:Z
-    command:
-      - "--disable-activity-sending"
-      - "--disable-http-server"
-    depends_on:
-      - postgres
-      - pictrs
-
-  lemmy-federate:
-    image: {{ lemmy_docker_image }}
-    hostname: lemmy-federate
-    restart: always
-    logging: *default-logging
-    environment:
-{% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
-{% for item in lemmy_env_vars %}
-{% for key, value in item.items() %}
-      - {{ key }}={{ value }}
-{% endfor %}
-{% endfor %}
-{% endif %}
-    volumes:
-      - ./lemmy.hjson:/config/config.hjson:Z
-    command:
-      - "--disable-scheduled-tasks"
-      - "--disable-http-server"
     depends_on:
       - postgres
       - pictrs
