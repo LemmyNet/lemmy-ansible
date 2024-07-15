@@ -8,10 +8,8 @@ services:
   proxy:
     image: docker.io/library/nginx 
     ports:
-      # actual and only port facing any connection from outside
-      # Note, change the left number if port 1236 is already in use on your system
-      # You could use port 80 if you won't use a reverse proxy
-      - "{{ lemmy_port }}:8536"
+      # Note, change lemmy_port in vars.yml if it is already in use on your system
+      - "127.0.0.1:{{ lemmy_port }}:8536"
     volumes:
       - ./nginx_internal.conf:/etc/nginx/nginx.conf:ro,Z
       - ./proxy_params:/etc/nginx/proxy_params:ro,Z
