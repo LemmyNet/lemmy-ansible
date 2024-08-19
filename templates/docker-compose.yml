@@ -81,7 +81,7 @@ services:
     logging: *default-logging
 
   postgres:
-    image: pgautoupgrade/pgautoupgrade:16-alpine
+    image: docker.io/pgautoupgrade/pgautoupgrade:16-alpine
     hostname: postgres
     environment:
 {% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
