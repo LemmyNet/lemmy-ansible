@@ -7,6 +7,7 @@ While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in tim
 While you are not forced into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
 
 For each new version run the following steps in your local `lemmy-ansible` folder:
+
 - Find the [latest version](https://github.com/LemmyNet/lemmy-ansible/releases)
 - Fetch the updated files: `git pull && git checkout *version_name*`
 - Check below for version specific upgrade steps
