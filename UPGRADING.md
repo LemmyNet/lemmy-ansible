@@ -6,47 +6,15 @@ While we specify a version of Lemmy, pict-rs, postgres, etc. at the point in tim
 
 While you are not forced into running the specific versions, we do not go through thorough testing on all version compatibility matrices, so please make your best judgement and always backup before performing updates.
 
-### Upgrading to 1.5.6 (Lemmy 0.19.10)
+## General Upgrade Instructions
 
-#### Steps
+Before upgrading to a new version, check the [join-lemmy news](https://join-lemmy.org/news) and the specific instructions below for any breaking changes. If none are listed it is enough to run the following steps in your local `lemmy-ansible` folder:
 
-- `git pull && git checkout 1.5.6`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+- Find the [latest version](https://github.com/LemmyNet/lemmy-ansible/releases)
+- Fetch the updated files: `git pull && git checkout *version_name*`
+- Run the deployment: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
-### Upgrading to 1.5.5 (Lemmy 0.19.9)
-
-#### Steps
-
-- `git pull && git checkout 1.5.5`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-
-### Upgrading to 1.5.4 (Lemmy 0.19.8)
-
-#### Steps
-
-- `git pull && git checkout 1.5.4`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-
-### Upgrading to 1.5.3 (Lemmy 0.19.7)
-
-#### Steps
-
-- `git pull && git checkout 1.5.3`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-
-### Upgrading to 1.5.2 (Lemmy 0.19.6)
-
-#### Steps
-
-- `git pull && git checkout 1.5.2`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-
-### Upgrading to 1.5.1 (Lemmy 0.19.5)
-
-#### Steps
-
-- `git pull && git checkout 1.5.1`
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
+## Specific Version Upgrades
 
 ### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5, postgres 16)
 
@@ -106,15 +74,6 @@ This is a semi-major release which upgrades pict-rs to 0.5 which has support for
 - Amend your `vars.yml` file to respect the new changes
   - Optional: Add: `PICTRS__UPGRADE__CONCURRENCY` with a value between 32 and 512 depending on how much RAM/CPU you want to dedicate to the upgrade process. A value of 32 used about 2.5GB of RAM for the migration.
   - Optional: Curl `/internal/prepare_upgrade` to minimise downtime while upgrading. See [the instructions below](https://github.com/LemmyNet/lemmy-ansible#update-your-pict-rs-sled-database-optional) or the official documentation [here](https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint)
-- Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
-
-### Upgrading to 1.3.1 (Lemmy 0.19.1)
-
-This is a very minor release but fixes issues relating to federation as part of the Lemmy update.
-
-#### Steps
-
-- `git pull && git checkout 1.3.1`
 - Run your regular deployment. Example: `ansible-playbook -i inventory/hosts lemmy.yml --become`
 
 ### Upgrading to 1.3.0 (Lemmy 0.19.0 & Pict-rs 0.4.7)
