@@ -69,7 +69,7 @@ If you wish to see another distribution on the list, please test on the latest c
 
    `ansible-galaxy install -r requirements.yml`
 
-9. Run the playbook:
+8. Run the playbook:
 
    _Note_: See the "Supported Distribution Playbook Matrix" section above if you should use `lemmy.yml` or not
 
