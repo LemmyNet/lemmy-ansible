@@ -10,7 +10,7 @@ To run this ansible playbook, you need to:
 - Supported CPU architectures are x86-64 and ARM64.
 - Configure a DNS `A` Record to point at your server's IP address.
 - Make sure you can ssh to it, with a sudo user: `ssh <your-user>@<your-domain>`
-- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (>= `2.11.0` on your **local** machine (do not install it on your destination server).
+- Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (>= `2.11.0` on your **local** machine (do not install it on your destination server)).
 
 ### Supported Distribution Playbook Matrix
 
@@ -65,7 +65,11 @@ If you wish to see another distribution on the list, please test on the latest c
 
    Edit the `inventory/host_vars/<your-domain>/vars.yml` file to your liking.
 
-7. Run the playbook:
+7. Install the ansible requirements
+
+   `ansible-galaxy install -r requirements.yml`
+
+8. Run the playbook:
 
    _Note_: See the "Supported Distribution Playbook Matrix" section above if you should use `lemmy.yml` or not
 
