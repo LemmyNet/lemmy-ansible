@@ -24,8 +24,8 @@ services:
     hostname: lemmy
     restart: always
     logging: *default-logging
-    environment:
 {% if lemmy_env_vars is defined and lemmy_env_vars|length > 0 %}
+    environment:
 {% for item in lemmy_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
@@ -40,8 +40,8 @@ services:
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
-    environment:
 {% if lemmyui_env_vars is defined and lemmyui_env_vars|length > 0 %}
+    environment:
 {% for item in lemmyui_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
@@ -61,8 +61,8 @@ services:
     hostname: pictrs
     # we can set options to pictrs like this, here we set max. image size and forced format for conversion
     # entrypoint: /sbin/tini -- /usr/local/bin/pict-rs -p /mnt -m 4 --image-format webp
-    environment:
 {% if pictrs_env_vars is defined and pictrs_env_vars|length > 0 %}
+    environment:
 {% for item in pictrs_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
@@ -81,8 +81,8 @@ services:
   postgres:
     image: docker.io/pgautoupgrade/pgautoupgrade:16-alpine
     hostname: postgres
-    environment:
 {% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
+    environment:
 {% for item in postgres_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
@@ -99,8 +99,8 @@ services:
 
   postfix:
     image: docker.io/mwader/postfix-relay
-    environment:
 {% if postfix_env_vars is defined and postfix_env_vars|length > 0 %}
+    environment:
 {% for item in postfix_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
@@ -114,8 +114,8 @@ services:
   pictrs-safety:
     image: ghcr.io/db0/pictrs-safety:v1.2.2
     hostname: pictrs-safety
-    environment:
 {% if pictrs_safety_env_vars is defined and pictrs_safety_env_vars|length > 0 %}
+    environment:
 {% for item in pictrs_safety_env_vars %}
 {% for key, value in item.items() %}
       - {{ key }}={{ value }}
