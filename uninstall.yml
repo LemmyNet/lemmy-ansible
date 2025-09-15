@@ -33,7 +33,7 @@
       when: ansible_distribution in ['Debian', 'Ubuntu']
       block:
         - name: Stop docker-compose
-          community.docker.docker_compose:
+          community.docker.docker_compose_v2:
             project_src: "{{ lemmy_base_dir }}/{{ domain }}"
             state: absent
 
