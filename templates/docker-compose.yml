@@ -16,8 +16,10 @@ services:
     restart: always
     logging: *default-logging
     depends_on:
-      - pictrs
-      - lemmy-ui
+      postgres:
+        condition: service_healthy
+      pictrs:
+        condition: service_started
 
   lemmy:
     image: {{ lemmy_docker_image }}
@@ -35,8 +37,10 @@ services:
     volumes:
       - ./lemmy.hjson:/config/config.hjson:Z
     depends_on:
-      - postgres
-      - pictrs
+      postgres:
+        condition: service_healthy
+      pictrs:
+        condition: service_started
 
   lemmy-ui:
     image: {{ lemmy_docker_ui_image }}
@@ -51,7 +55,8 @@ services:
     volumes:
       - ./volumes/lemmy-ui/extra_themes:/app/extra_themes:Z
     depends_on:
-      - lemmy
+      lemmy:
+        condition: service_started
     restart: always
     logging: *default-logging
 
@@ -128,5 +133,6 @@ services:
     restart: always
     logging: *default-logging
     depends_on:
-      - pictrs
+      pictrs:
+        condition: service_started
 {% endif %}
