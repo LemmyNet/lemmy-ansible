@@ -43,12 +43,13 @@ docker run -d \
 
 # Start Lemmy backend
 echo "Starting Lemmy backend..."
+# Using 0.19.14 backend as 0.19.15-alpha.1 backend image is not available
 docker run -d \
   --name lemmy-test-backend \
   --network lemmy-test-network \
   -e RUST_LOG=warn \
   -v "$(pwd)/test-lemmy.hjson:/config/config.hjson:ro" \
-  dessalines/lemmy:0.19.15-alpha.1
+  dessalines/lemmy:0.19.14
 
 # Wait for Lemmy backend to initialize
 echo "Waiting for Lemmy backend to initialize..."

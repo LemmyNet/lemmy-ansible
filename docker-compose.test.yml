@@ -23,7 +23,8 @@ services:
       - lemmy-test
 
   lemmy:
-    image: dessalines/lemmy:0.19.15-alpha.1
+    # Using 0.19.14 backend as 0.19.15-alpha.1 backend image is not available
+    image: dessalines/lemmy:0.19.14
     hostname: lemmy
     restart: unless-stopped
     logging: *default-logging

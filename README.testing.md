@@ -65,7 +65,7 @@ docker stop lemmy-ui-test && docker rm lemmy-ui-test
 The test setup includes:
 
 - **Lemmy UI** (`dessalines/lemmy-ui:0.19.15-alpha.1`) - The image being tested
-- **Lemmy Backend** (`dessalines/lemmy:0.19.15-alpha.1`) - API server
+- **Lemmy Backend** (`dessalines/lemmy:0.19.14`) - API server (using stable version as alpha backend is not available)
 - **PostgreSQL** (`postgres:16-alpine`) - Database
 - **Pictrs** (`asonix/pictrs:0.5`) - Image hosting service
 - **Nginx** (`nginx:latest`) - Reverse proxy
