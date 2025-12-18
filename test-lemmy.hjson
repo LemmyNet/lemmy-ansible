@@ -1,0 +1,26 @@
+{
+  # Test configuration for Lemmy backend
+  # Minimal configuration for testing purposes
+  
+  database: {
+    host: postgres
+    port: 5432
+    user: lemmy
+    password: "test-password-123"
+    database: lemmy
+  }
+  
+  hostname: "localhost:1236"
+  
+  pictrs: {
+    url: "http://pictrs:8080/"
+    api_key: "test-api-key-123"
+  }
+  
+  # Setup section
+  setup: {
+    admin_username: "admin"
+    admin_password: "admin"
+    site_name: "Lemmy Test Instance"
+  }
+}
