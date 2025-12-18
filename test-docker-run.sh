@@ -19,6 +19,7 @@ docker network create lemmy-test-network 2>/dev/null || echo "Network already ex
 echo "Starting PostgreSQL..."
 docker run -d \
   --name lemmy-test-postgres \
+  --hostname postgres \
   --network lemmy-test-network \
   -e POSTGRES_USER=lemmy \
   -e POSTGRES_PASSWORD=test-password-123 \
@@ -34,6 +35,7 @@ sleep 5
 echo "Starting Pictrs..."
 docker run -d \
   --name lemmy-test-pictrs \
+  --hostname pictrs \
   --network lemmy-test-network \
   -e PICTRS__SERVER__API_KEY=test-api-key-123 \
   -e RUST_LOG=info \
@@ -46,6 +48,7 @@ echo "Starting Lemmy backend..."
 # Using 0.19.14 backend as 0.19.15-alpha.1 backend image is not available
 docker run -d \
   --name lemmy-test-backend \
+  --hostname lemmy \
   --network lemmy-test-network \
   -e RUST_LOG=warn \
   -v "$(pwd)/test-lemmy.hjson:/config/config.hjson:ro" \
@@ -59,8 +62,9 @@ sleep 10
 echo "Starting Lemmy UI (dessalines/lemmy-ui:0.19.15-alpha.1)..."
 docker run -d \
   --name lemmy-test-ui \
+  --hostname lemmy-ui \
   --network lemmy-test-network \
-  -e LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy-test-backend:8536 \
+  -e LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536 \
   -e LEMMY_UI_LEMMY_EXTERNAL_HOST=localhost:1236 \
   -e LEMMY_UI_HTTPS=false \
   dessalines/lemmy-ui:0.19.15-alpha.1
