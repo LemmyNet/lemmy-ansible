@@ -5,8 +5,6 @@
   # Install python if required
   # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
   gather_facts: false
-  vars_files:
-    - "inventory/host_vars/{{ domain }}/vars.yml"
   pre_tasks:
     - name: Assert that Ansible version is >= 2.11.0
       delegate_to: localhost
@@ -64,6 +62,10 @@
       become: false
       tags:
         - always
+
+    - name: Load the vars.yml files
+      ansible.builtin.include_vars:
+        file: "inventory/host_vars/{{ domain }}/vars.yml"
 
     - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
