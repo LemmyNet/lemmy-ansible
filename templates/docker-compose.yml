@@ -95,6 +95,8 @@ services:
 {% endfor %}
 {% endif %}
     volumes:
+      # starting postgres 18+ this will need to be `/volumes/postgres:/var/lib/postgresql:Z`
+      # ref: https://github.com/pgautoupgrade/docker-pgautoupgrade?tab=readme-ov-file#error-message-when-mounting-data-to-varlibpostgresqldata-on-postgres-v18
       - ./volumes/postgres:/var/lib/postgresql/data:Z
       - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
