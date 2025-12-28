@@ -108,7 +108,6 @@
           - "ca-certificates"
           - "curl"
           - "gnupg"
-          - "software-properties-common"
           - "python3-pip"
           - "virtualenv"
           - "python3-setuptools"
@@ -164,11 +163,35 @@
               https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
             state: present
 
+    - name: Configure Docker apt repo for Debian >= 13 (Trixie)
+      when: (ansible_distribution == 'Debian' and ansible_distribution_version >= 12)
+      tags:
+        - dependencies
+        - docker
+      block:
+        - name: Download Docker GPG Key
+          ansible.builtin.get_url:
+            url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+            dest: /etc/apt/keyrings/docker.asc
+            checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+            mode: "0644"
+        - name: Add Docker apt repo
+          ansible.builtin.deb822_repository:
+            name: docker
+            types: deb
+            uris: https://download.docker.com/linux/{{ ansible_distribution | lower }}
+            suites: '{{ ansible_distribution_release }}'
+            components: stable
+            signed_by: /etc/apt/keyrings/docker.asc
+            state: present
+
     - name: Install docker-ce and docker-compose
       ansible.builtin.apt:
         name:
+          - container.io
           - docker-ce
-          - docker-compose
+          - docker-buildx-plugin
+          - docker-compose-plugin
         state: present
         update_cache: true
       tags:
