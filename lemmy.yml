@@ -182,7 +182,7 @@
             name: docker
             types: deb
             uris: https://download.docker.com/linux/{{ ansible_distribution | lower }}
-            suites: '{{ ansible_distribution_release }}'
+            suites: "{{ ansible_distribution_release }}"
             components: stable
             signed_by: /etc/apt/keyrings/docker.asc
             state: present
