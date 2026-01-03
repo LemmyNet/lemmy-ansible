@@ -5,8 +5,6 @@
   # Install python if required
   # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
   gather_facts: false
-  vars_files:
-    - "inventory/host_vars/{{ domain }}/vars.yml"
   pre_tasks:
     - name: Assert that Ansible version is >= 2.11.0
       delegate_to: localhost
@@ -65,6 +63,10 @@
       tags:
         - always
 
+    - name: Load the vars.yml files
+      ansible.builtin.include_vars:
+        file: "inventory/host_vars/{{ domain }}/vars.yml"
+
     - name: Install python for Ansible
       # python2-minimal instead of python-minimal for ubuntu 20.04 and up
       ansible.builtin.raw: test -e /usr/bin/python || test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal python3-setuptools)
@@ -108,7 +110,6 @@
           - "ca-certificates"
           - "curl"
           - "gnupg"
-          - "software-properties-common"
           - "python3-pip"
           - "virtualenv"
           - "python3-setuptools"
@@ -144,8 +145,8 @@
     # based on https://docs.docker.com/engine/install/debian/
     # and https://docs.docker.com/engine/install/ubuntu/
     # note that Debian and Ubuntu use the same key
-    - name: Configure Docker apt repo for Debian or Ubuntu >= 22.04
-      when: (ansible_distribution == 'Debian') or
+    - name: Configure Docker apt repo for Debian < 12 or Ubuntu >= 22.04
+      when: (ansible_distribution == 'Debian' and ansible_distribution_version | int < 12) or
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       tags:
         - dependencies
@@ -164,11 +165,35 @@
               https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
             state: present
 
+    - name: Configure Docker apt repo for Debian >= 13 (Trixie)
+      when: (ansible_distribution == 'Debian' and ansible_distribution_version | int >= 12)
+      tags:
+        - dependencies
+        - docker
+      block:
+        - name: Download Docker GPG Key
+          ansible.builtin.get_url:
+            url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+            dest: /etc/apt/keyrings/docker.asc
+            checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+            mode: "0644"
+        - name: Add Docker apt repo
+          ansible.builtin.deb822_repository:
+            name: docker
+            types: deb
+            uris: https://download.docker.com/linux/{{ ansible_distribution | lower }}
+            suites: "{{ ansible_distribution_release }}"
+            components: stable
+            signed_by: /etc/apt/keyrings/docker.asc
+            state: present
+
     - name: Install docker-ce and docker-compose
       ansible.builtin.apt:
         name:
+          - containerd.io
           - docker-ce
-          - docker-compose
+          - docker-buildx-plugin
+          - docker-compose-plugin
         state: present
         update_cache: true
       tags:
