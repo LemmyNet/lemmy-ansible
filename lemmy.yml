@@ -145,8 +145,8 @@
     # based on https://docs.docker.com/engine/install/debian/
     # and https://docs.docker.com/engine/install/ubuntu/
     # note that Debian and Ubuntu use the same key
-    - name: Configure Docker apt repo for Debian or Ubuntu >= 22.04
-      when: (ansible_distribution == 'Debian') or
+    - name: Configure Docker apt repo for Debian < 12 or Ubuntu >= 22.04
+      when: (ansible_distribution == 'Debian' and ansible_distribution_version | int < 12) or
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       tags:
         - dependencies
@@ -166,7 +166,7 @@
             state: present
 
     - name: Configure Docker apt repo for Debian >= 13 (Trixie)
-      when: (ansible_distribution == 'Debian' and ansible_distribution_version >= 12)
+      when: (ansible_distribution == 'Debian' and ansible_distribution_version | int >= 12)
       tags:
         - dependencies
         - docker
@@ -190,7 +190,7 @@
     - name: Install docker-ce and docker-compose
       ansible.builtin.apt:
         name:
-          - container.io
+          - containerd.io
           - docker-ce
           - docker-buildx-plugin
           - docker-compose-plugin
