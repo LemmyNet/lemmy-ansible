@@ -2,8 +2,6 @@
 - name: Install Lemmy
   hosts: all
   gather_facts: true
-  vars_files:
-    - "inventory/host_vars/{{ domain }}/vars.yml"
   pre_tasks:
     - name: Assert that Ansible version is >= 2.11.0
       delegate_to: localhost
@@ -51,6 +49,10 @@
           and https://github.com/LemmyNet/lemmy-ansible#upgrading
       when: not vars_file.stat.exists
       become: false
+
+    - name: Load the vars.yml files
+      ansible.builtin.include_vars:
+        file: "inventory/host_vars/{{ domain }}/vars.yml"
   handlers:
     - name: Reload nginx
       ansible.builtin.systemd:

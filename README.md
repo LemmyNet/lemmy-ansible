@@ -19,9 +19,9 @@ If you wish to see another distribution on the list, please test on the latest c
 
 | Distribution | Version   | Playbook              |
 | ------------ | --------- | --------------------- |
-| Debian       | 10        | `lemmy.yml`           |
 | Debian       | 11        | `lemmy.yml`           |
 | Debian       | 12        | `lemmy.yml`           |
+| Debian       | 13        | `lemmy.yml`           |
 | Ubuntu       | 22.04 LTS | `lemmy.yml`           |
 | RHEL         | 9         | `lemmy-almalinux.yml` |
 
