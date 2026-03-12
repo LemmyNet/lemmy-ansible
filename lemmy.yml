@@ -146,7 +146,8 @@
     # and https://docs.docker.com/engine/install/ubuntu/
     # note that Debian and Ubuntu use the same key
     - name: Configure Docker apt repo for Debian < 12 or Ubuntu >= 22.04
-      when: (ansible_distribution == 'Debian' and ansible_distribution_version | int < 12) or
+      when:
+        (ansible_distribution == 'Debian' and ansible_distribution_version | int < 12) or
         (ansible_distribution == 'Ubuntu' and ansible_distribution_version >= '22.04')
       tags:
         - dependencies
