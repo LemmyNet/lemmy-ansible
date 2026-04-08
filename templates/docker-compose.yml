@@ -20,6 +20,10 @@ services:
         condition: service_healthy
       pictrs:
         condition: service_started
+{% if anubis is defined and anubis|bool == true %}
+      anubis:
+        condition: service_healthy
+{% endif %}
 
   lemmy:
     image: {{ lemmy_docker_image }}
