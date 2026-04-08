@@ -144,7 +144,7 @@ services:
   anubis:
     image: ghcr.io/techarohq/anubis:latest
     environment:
-      BIND: ":8923"
+      BIND: ":8924"
       DIFFICULTY: "4"
       METRICS_BIND: ":9090"
       SERVE_ROBOTS_TXT: "true"
@@ -159,7 +159,7 @@ services:
       retries: 5
       start_period: 500ms
     ports:
-      - 8923:8923
+      - 8924:8924
     volumes:
       - "./botPolicy.yaml:/data/cfg/botPolicy.yaml:ro"
 {% endif %}
