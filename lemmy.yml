@@ -269,6 +269,9 @@
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{ domain }}.conf"
               mode: "0644"
+            - src: "templates/botPolicy.yaml"
+              dest: "{{ lemmy_base_dir }}/{{ domain }}/botPolicy.yaml"
+              mode: "0644"
           notify: Reload nginx
           vars:
             lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(lookup('file', 'VERSION')) }}"

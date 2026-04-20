@@ -20,6 +20,10 @@ services:
         condition: service_healthy
       pictrs:
         condition: service_started
+{% if anubis is defined and anubis|bool == true %}
+      anubis:
+        condition: service_healthy
+{% endif %}
 
   lemmy:
     image: {{ lemmy_docker_image }}
@@ -135,4 +139,27 @@ services:
     depends_on:
       pictrs:
         condition: service_started
+{% endif %}
+{% if anubis is defined and anubis|bool == true %}
+  anubis:
+    image: ghcr.io/techarohq/anubis:latest
+    environment:
+      BIND: ":8924"
+      DIFFICULTY: "4"
+      METRICS_BIND: ":9090"
+      SERVE_ROBOTS_TXT: "true"
+      TARGET: "http://lemmy-ui:1234"
+      POLICY_FNAME: "/data/cfg/botPolicy.yaml"
+      OG_PASSTHROUGH: "true"
+      OG_EXPIRY_TIME: "24h"
+    healthcheck:
+      test: ["CMD", "anubis", "--healthcheck"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 500ms
+    ports:
+      - 8924:8924
+    volumes:
+      - "./botPolicy.yaml:/data/cfg/botPolicy.yaml:ro"
 {% endif %}

@@ -1,0 +1,58 @@
+# You can find the default botPolicy here:
+# https://github.com/TecharoHQ/anubis/blob/main/data/botPolicies.yaml
+
+bots:
+  - import: (data)/meta/default-config.yaml
+
+dnsbl: false
+
+openGraph:
+  enabled: false
+  considerHost: false
+  ttl: 24h
+
+status_codes:
+  CHALLENGE: 200
+  DENY: 200
+
+store:
+  backend: memory
+  parameters: {}
+
+thresholds:
+  - name: minimal-suspicion
+    expression: weight <= 0
+    action: ALLOW
+  - name: mild-suspicion
+    expression:
+      all:
+        - weight > 0
+        - weight < 10
+    action: CHALLENGE
+    challenge:
+      algorithm: metarefresh
+      difficulty: 1
+  - name: moderate-suspicion
+    expression:
+      all:
+        - weight >= 10
+        - weight < 20
+    action: CHALLENGE
+    challenge:
+      algorithm: fast
+      difficulty: 2
+  - name: mild-proof-of-work
+    expression:
+      all:
+        - weight >= 20
+        - weight < 30
+    action: CHALLENGE
+    challenge:
+      algorithm: fast
+      difficulty: 4
+  - name: extreme-suspicion
+    expression: weight >= 30
+    action: CHALLENGE
+    challenge:
+      algorithm: fast
+      difficulty: 6
