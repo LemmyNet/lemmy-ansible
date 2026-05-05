@@ -254,6 +254,10 @@
             - configs
             - nginx
 
+        - name: Fetch latest Lemmy version
+          ansible.builtin.set_fact:
+            latest_version: "{{lookup('url', 'https://api.github.com/repos/LemmyNet/lemmy/releases/latest') | from_json}}"
+
         - name: Add template files
           ansible.builtin.template:
             src: "{{ item.src }}"
@@ -271,8 +275,8 @@
               mode: "0644"
           notify: Reload nginx
           vars:
-            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(lookup('file', 'VERSION')) }}"
-            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(lookup('file', 'VERSION'))) }}"
+            lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(latest_version.tag_name) }}"
+            lemmy_docker_ui_image: "dessalines/lemmy-ui:{{ lemmy_ui_version | default(lemmy_version | default(latest_version.tag_name)) }}"
           tags:
             - configs
             - nginx
