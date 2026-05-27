@@ -152,6 +152,7 @@ services:
       POLICY_FNAME: "/data/cfg/botPolicy.yaml"
       OG_PASSTHROUGH: "true"
       OG_EXPIRY_TIME: "24h"
+      ED25519_PRIVATE_KEY_HEX: "d1c09841dc1baff09ddce251bce31e89d7b8b8d055a2d87bba1637ebac3dcc62"
     healthcheck:
       test: ["CMD", "anubis", "--healthcheck"]
       interval: 5s
@@ -162,4 +163,5 @@ services:
       - 8924:8924
     volumes:
       - "./botPolicy.yaml:/data/cfg/botPolicy.yaml:ro"
+      - "./anubis.bdb:/data/anubis.bdb"
 {% endif %}
