@@ -280,7 +280,12 @@
             - configs
             - nginx
             - docker
-
+        - name: Add anubis bot policy
+          ansible.builtin.template:
+            src: "templates/botPolicy.yaml"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/botPolicy.yaml"
+            mode: "0644"
+          notify: reload anubis
         - name: Set up nginx sites-enabled symlink
           notify: Reload nginx
           tags:
