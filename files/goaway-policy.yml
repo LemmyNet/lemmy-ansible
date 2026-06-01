@@ -1,0 +1,186 @@
+# Example cmdline (forward requests from upstream to port :8080)
+# $ go-away --bind :8080 --backend site.example.com=http://site:3000 --policy examples/generic.yml --policy-snippets example/snippets/ --challenge-template anubis
+
+
+
+# Define networks to be used later below
+networks:
+  # Networks will get included from snippets
+
+
+challenges:
+  # Challenges will get included from snippets
+
+conditions:
+  # Conditions will get replaced on rules AST when found as ($condition-name)
+
+  # Conditions will get included from snippets
+
+
+  is-static-asset:
+    - 'path == "/apple-touch-icon.png"'
+    - 'path == "/apple-touch-icon-precomposed.png"'
+    - 'path.matches("\\.(manifest|ttf|woff|woff2|jpg|jpeg|gif|png|webp|avif|svg|mp4|webm|css|js|mjs|wasm)$")'
+
+  is-suspicious-crawler:
+    - 'userAgent.contains("Presto/") || userAgent.contains("Trident/")'
+    # Old IE browsers
+    - 'userAgent.matches("MSIE ([2-9]|10|11)\\.")'
+    # Old Linux browsers
+    - 'userAgent.matches("Linux i[63]86") || userAgent.matches("FreeBSD i[63]86")'
+    # Old Windows browsers
+    - 'userAgent.matches("Windows (3|95|98|CE)") || userAgent.matches("Windows NT [1-5]\\.")'
+    # Old mobile browsers
+    - 'userAgent.matches("Android [1-5]\\.") || userAgent.matches("(iPad|iPhone) OS [1-9]_")'
+    # Old generic browsers
+    - 'userAgent.startsWith("Opera/")'
+    #- 'userAgent.matches("Gecko/(201[0-9]|200[0-9])")'
+    - 'userAgent.matches("^Mozilla/[1-4]")'
+
+
+# Rules are checked sequentially in order, from top to bottom
+rules:
+  - name: allow-well-known-resources
+    conditions:
+      - '($is-well-known-asset)'
+    action: pass
+
+  - name: allow-static-resources
+    conditions:
+      - '($is-static-asset)'
+    action: pass
+
+  - name: desired-crawlers
+    conditions:
+      - *is-bot-googlebot
+      - *is-bot-bingbot
+      - *is-bot-duckduckbot
+      - *is-bot-kagibot
+      - *is-bot-qwantbot
+      - *is-bot-yandexbot
+    action: pass
+
+  # Matches private networks and localhost.
+  # Uncomment this if you want to let your own tools this way
+  #  - name: allow-private-networks
+  #    conditions:
+  #      # Allows localhost and private networks CIDR
+  #      - *is-network-localhost
+  #      - *is-network-private
+  #    action: pass
+
+  - name: undesired-crawlers
+    conditions:
+      - '($is-headless-chromium)'
+      - 'userAgent.startsWith("Lightpanda/")'
+      - 'userAgent.startsWith("masscan/")'
+      # Typo'd opera botnet
+      - 'userAgent.matches("^Opera/[0-9.]+\\.\\(")'
+      # AI bullshit stuff, they do not respect robots.txt even while they read it
+      # TikTok Bytedance AI training
+      - 'userAgent.contains("Bytedance") || userAgent.contains("Bytespider") || userAgent.contains("TikTokSpider")'
+      # Meta AI training; The Meta-ExternalAgent crawler crawls the web for use cases such as training AI models or improving products by indexing content directly.
+      - 'userAgent.contains("meta-externalagent/") || userAgent.contains("meta-externalfetcher/") || userAgent.contains("FacebookBot")'
+      # Anthropic AI training and usage
+      - 'userAgent.contains("ClaudeBot") || userAgent.contains("Claude-User")|| userAgent.contains("Claude-SearchBot")'
+      # Common Crawl AI crawlers
+      - 'userAgent.contains("CCBot")'
+      # ChatGPT AI crawlers https://platform.openai.com/docs/bots
+      - 'userAgent.contains("GPTBot") || userAgent.contains("OAI-SearchBot") || userAgent.contains("ChatGPT-User")'
+      # Other AI crawlers
+      - 'userAgent.contains("Amazonbot") || userAgent.contains("Google-Extended") || userAgent.contains("PanguBot") || userAgent.contains("AI2Bot") || userAgent.contains("Diffbot") || userAgent.contains("cohere-training-data-crawler") || userAgent.contains("Applebot-Extended")'
+      # SEO / Ads and marketing
+      - 'userAgent.contains("BLEXBot")'
+    action: drop
+
+  - name: unknown-crawlers
+    conditions:
+      # No user agent set
+      - 'userAgent == ""'
+    action: deny
+
+  # check a sequence of challenges
+  - name: suspicious-crawlers
+    conditions: ['($is-suspicious-crawler)']
+    action: none
+    children:
+      - name: 0
+        action: check
+        settings:
+          challenges: [js-refresh]
+      - name: 1
+        action: check
+        settings:
+          challenges: [preload-link, resource-load]
+      - name: 2
+        action: check
+        settings:
+          challenges: [header-refresh]
+
+  - name: homesite
+    conditions:
+      - 'path == "/"'
+    action: pass
+
+  # check DNSBL and serve harder challenges
+  # todo: make this specific to score
+  - name: undesired-dnsbl
+    action: check
+    settings:
+      challenges: [dnsbl]
+      # if DNSBL fails, check additional challenges
+      fail: check
+      fail-settings:
+        challenges: [js-refresh]
+
+  - name: suspicious-fetchers
+    action: check
+    settings:
+      challenges: [js-refresh]
+    conditions:
+      - 'userAgent.contains("facebookexternalhit/") || userAgent.contains("facebookcatalog/")'
+
+  # Allow PUT/DELETE/PATCH/POST requests in general
+  - name: non-get-request
+    action: pass
+    conditions:
+      - '!(method == "HEAD" || method == "GET")'
+
+  # Enable fetching OpenGraph and other tags from backend on these paths
+  - name: enable-meta-tags
+    action: context
+    settings:
+      context-set:
+        # Map OpenGraph or similar <meta> tags back to the reply, even if denied/challenged
+        proxy-meta-tags: "true"
+
+      # Set additional response headers
+      #response-headers:
+      # X-Clacks-Overhead:
+      #  - GNU Terry Pratchett
+
+  - name: plaintext-browser
+    action: challenge
+    settings:
+      challenges: [meta-refresh, cookie]
+    conditions:
+      - 'userAgent.startsWith("Lynx/")'
+
+  # Uncomment this rule out to challenge tool-like user agents
+  #- name: standard-tools
+  #  action: challenge
+  #  settings:
+  #    challenges: [cookie]
+  #  conditions:
+  #    - '($is-generic-robot-ua)'
+  #    - '($is-tool-ua)'
+  #    - '!($is-generic-browser)'
+
+  - name: standard-browser
+    action: challenge
+    settings:
+      challenges: [preload-link, meta-refresh, resource-load, js-refresh]
+    conditions:
+      - '($is-generic-browser)'
+
+# If end of rules is reached, default is PASS

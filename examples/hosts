@@ -13,7 +13,10 @@
 #                   will be configured to validate images through it. You will also need to set up a 
 #                   fedi-safety worker to validate the images.
 # - `lemmy_web_port`: <Optional> Sets the host->docker nginx upstream port to allow a static host nginx configuration
-example.com  ansible_user=root domain=example.com  letsencrypt_contact_email=your@email.com  lemmy_base_dir=/srv/lemmy pictrs_safety=false lemmy_web_port=9633
+# - `go_away`: <Optional> If true, deploys the go-away anti-bot challenge proxy in front of lemmy-ui.
+#                   GET/HEAD page requests are filtered through go-away (see files/goaway-policy.yml)
+#                   before reaching the UI. Defaults to false (disabled).
+example.com  ansible_user=root domain=example.com  letsencrypt_contact_email=your@email.com  lemmy_base_dir=/srv/lemmy pictrs_safety=false go_away=false lemmy_web_port=9633
 
 [all:vars]
 ansible_connection=ssh

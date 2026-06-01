@@ -322,6 +322,26 @@
             - configs
             - postgresql
 
+        - name: Add go-away policy
+          ansible.builtin.copy:
+            src: files/goaway-policy.yml
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/policy.yml"
+            mode: "0644"
+          when: go_away is defined and go_away | bool
+          tags:
+            - configs
+            - docker
+
+        - name: Add go-away challenge template
+          ansible.builtin.copy:
+            src: files/lemmy-challenge.gohtml
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/lemmy-challenge.gohtml"
+            mode: "0644"
+          when: go_away is defined and go_away | bool
+          tags:
+            - configs
+            - docker
+
     - name: Enable and start docker service
       ansible.builtin.systemd:
         name: docker

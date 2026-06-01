@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+{{$logo := "https://join-lemmy.org/static/assets/images/lemmy.svg"}}{{ if .Logo }}{{$logo = .Logo}}{{ end }}
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <meta name="referrer" content="origin">
+
+    <title>{{ .Title }}</title>
+
+    {{ range .MetaTags }}
+    <meta {{ range $key, $value := . }}{{ $key | attr }}="{{ $value }}" {{end}}/>
+    {{ end }}
+    {{ range .LinkTags }}
+    <link {{ range $key, $value := . }}{{ $key | attr }}="{{ $value }}" {{end}}/>
+    {{ end }}
+    {{ range .HeaderTags }}
+    {{ . }}
+    {{ end }}
+
+    <style>
+        :root {
+            --color-bg: #121317;
+            --color-surface: #1c1d23;
+            --color-border: #2d2e35;
+            --color-text: #d4d4d4;
+            --color-text-muted: #888;
+            --color-accent: #5b9bd5;
+            --color-accent-hover: #7cb8e4;
+            --color-error: #e05555;
+            --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --color-bg: #f5f5f5;
+                --color-surface: #ffffff;
+                --color-border: #ddd;
+                --color-text: #333;
+                --color-text-muted: #777;
+                --color-accent: #346cb0;
+                --color-accent-hover: #1d4f8a;
+                --color-error: #c04040;
+            }
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            max-width: 200px;
+            max-height: 80px;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--color-text);
+        }
+
+        .status {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--color-text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .status em {
+            font-style: normal;
+            font-family: var(--font-mono);
+            color: var(--color-accent);
+        }
+
+        .status .error-text {
+            color: var(--color-error);
+        }
+
+        .loading-dots::after {
+            content: "";
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%   { content: ""; }
+            25%  { content: "."; }
+            50%  { content: ".."; }
+            75%  { content: "..."; }
+            100% { content: ""; }
+        }
+
+        details {
+            text-align: left;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        details summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--color-text);
+            user-select: none;
+        }
+
+        details summary:hover {
+            color: var(--color-accent);
+        }
+
+        details[open] {
+            padding-bottom: 1rem;
+        }
+
+        details p {
+            margin-top: 0.75rem;
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+            line-height: 1.7;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.625rem 1.5rem;
+            background: var(--color-accent);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: background 0.15s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .request-id {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 1.5rem;
+        }
+
+        .request-id em {
+            font-style: normal;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+
+        .button-row {
+            margin: 1.5rem 0;
+        }
+
+        noscript {
+            display: block;
+            padding: 0.625rem 1rem;
+            background: rgba(224, 85, 85, 0.1);
+            border: 1px solid var(--color-error);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--color-error);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img class="logo" src="{{ $logo }}" alt="Logo">
+    <h1 class="title">{{ .Title }}</h1>
+
+    {{if .Challenge }}
+    <p class="status">{{ .Strings.Get "status_loading_challenge" }} <em>{{ .Challenge }}</em><span class="loading-dots"></span></p>
+    {{else if .Error}}
+    <p class="status"><span class="error-text">{{ .Strings.Get "status_error" }} {{ .Error }}</span></p>
+    {{else}}
+    <p class="status">{{ .Strings.Get "status_loading" }}<span class="loading-dots"></span></p>
+    {{end}}
+
+    <details>
+        <summary>{{ .Strings.Get "details_title" }}</summary>
+        <p>{{ .Strings.Get "details_text" }}</p>
+    </details>
+
+    {{if .Redirect }}
+    <div class="button-row">
+        <a class="btn" href="{{ .Redirect }}">{{ .Strings.Get "button_refresh_page" }}</a>
+    </div>
+    {{end}}
+
+    {{if .EndTags }}
+    <noscript>
+        {{ .Strings.Get "noscript_warning" }}
+    </noscript>
+    {{end}}
+
+    <p class="request-id">{{ .Strings.Get "details_contact_admin_with_request_id" }}: <em>{{ .Id }}</em></p>
+</div>
+
+<footer>
+    Protected by <a href="https://git.gammaspectra.live/git/go-away">go-away</a> :: Request Id <em>{{ .Id }}</em>
+    {{ range .Links }}
+        :: <a href="{{ .URL }}">{{ .Name }}</a>
+    {{ end }}
+</footer>
+
+{{ range .EndTags }}
+    {{ . }}
+{{ end }}
+
+</body>
+</html>

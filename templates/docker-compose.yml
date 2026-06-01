@@ -20,6 +20,10 @@ services:
         condition: service_healthy
       pictrs:
         condition: service_started
+{% if go_away is defined and go_away|bool == true %}
+      go-away:
+        condition: service_started
+{% endif %}
 
   lemmy:
     image: {{ lemmy_docker_image }}
@@ -135,4 +139,23 @@ services:
     depends_on:
       pictrs:
         condition: service_started
+{% endif %}
+
+{% if go_away is defined and go_away|bool == true %}
+  go-away:
+    image: git.gammaspectra.live/git/go-away:latest
+    restart: always
+    volumes:
+      - "goaway_cache_main:/cache"
+      - "./policy.yml:/policy.yml:ro"
+      - "./lemmy-challenge.gohtml:/lemmy-challenge.gohtml:ro"
+    environment:
+      GOAWAY_CLIENT_IP_HEADER: "X-Real-Ip"
+      GOAWAY_POLICY: "/policy.yml"
+      GOAWAY_CHALLENGE_TEMPLATE: /lemmy-challenge.gohtml
+      GOAWAY_SLOG_LEVEL: "INFO"
+      GOAWAY_BACKEND: "{{ domain }}=http://lemmy-ui:1234"
+
+volumes:
+  goaway_cache_main:
 {% endif %}
