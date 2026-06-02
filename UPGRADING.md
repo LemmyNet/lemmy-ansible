@@ -29,7 +29,7 @@ You need to migrate from postgres v15 to v16. A helper script is provided, that 
 There will be downtime, and it is a little scary as it will be deleting the `volumes/postgres` folder. The only backup you have during this time will be the `15_16_dump.sql`, created by the helper script.
 
 On my reference instance (4 CPU, 8GB Memory, 30GB volumes/postgres), it took 10 minutes to dump the backup, and another 20 minutes to import it again. The biggest time sink when importing is when it recreates the indexes.
-If you have a faster system and no noisy neighbours you could get the dump and import to be below 20 minutes, but I'd aim for a 60 minute maintenace window.
+If you have a faster system and no noisy neighbours you could get the dump and import to be below 20 minutes, but I'd aim for a 60 minute maintenance window.
 
 - The script you need to download and push onto your server: [postgres_15_to_16_upgrade.sh](https://github.com/LemmyNet/lemmy/blob/main/scripts/postgres_15_to_16_upgrade.sh).
 
@@ -99,7 +99,7 @@ This is a major change and has required reading! tl;dr
 
 If you are happy for pict-rs to be down _for a while_ ~go straight to our `1.3.1` git tag which updates pictrs to 0.5.0~. Otherwise keep reading.
 Starting with 0.5.0 your database will automatically upgrade to the latest version, which will cause downtime for your users.
-As such there is an intermediary step where you can upgrade your database in the background to prepare for 0.5 (Reference documentation)[https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint]. This ensure no-one is caught out by unforseen downtime of multiple services.
+As such there is an intermediary step where you can upgrade your database in the background to prepare for 0.5 (Reference documentation)[https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint]. This ensure no-one is caught out by unforeseen downtime of multiple services.
 
 Once you have deployed lemmy-ansible `1.3.0` tag, please continue (if you want):
 
