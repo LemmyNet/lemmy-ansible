@@ -89,6 +89,12 @@
         name: nginx
         state: reloaded
 
+    - name: Reload anubis
+      community.docker.docker_compose_v2:
+        name: docker
+        services: anubis
+        state: restarted
+
   tasks:
     - name: Ensure target system is Debian or Ubuntu
       ansible.builtin.assert:
@@ -277,6 +283,21 @@
             - configs
             - nginx
             - docker
+
+        - name: Add anubis bot policy
+          ansible.builtin.template:
+            src: "templates/botPolicy.yaml"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/botPolicy.yaml"
+            mode: "0644"
+          notify: Reload anubis
+
+        - name: Add anubis bolt database file
+          file:
+            path: "{{ lemmy_base_dir }}/{{ domain }}/anubis.bdb"
+            state: touch
+            mode: "0600"
+            # owner: "1000"
+            # group: "1000"
 
         - name: Set up nginx sites-enabled symlink
           notify: Reload nginx
