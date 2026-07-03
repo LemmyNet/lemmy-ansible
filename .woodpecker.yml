@@ -1,13 +1,13 @@
 steps:
   prettier_markdown_check:
-    image: jauderho/prettier:3.8.1-alpine
+    image: jauderho/prettier:3.9.4-alpine
     commands:
       - prettier -c "*.md" "*.yml" "examples/vars.yml"
     when:
       - event: pull_request
 
   check_ansible_format:
-    image: pipelinecomponents/ansible-lint:0.79.11
+    image: pipelinecomponents/ansible-lint:0.79.38
     commands:
       - ansible-playbook lemmy.yml --syntax-check
       - ansible-playbook lemmy-almalinux.yml --syntax-check
@@ -16,7 +16,7 @@ steps:
       - event: pull_request
 
   ansible_lint:
-    image: pipelinecomponents/ansible-lint:0.79.11
+    image: pipelinecomponents/ansible-lint:0.79.38
     commands:
       - ansible-lint --warn-list experimental lemmy.yml lemmy-almalinux.yml uninstall.yml examples/vars.yml
     when:

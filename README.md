@@ -93,7 +93,7 @@ If you wish to see another distribution on the list, please test on the latest c
 
 ## Upgrading
 
-Please see the dedicated [UPGRADING](UPGRADING.md) document for all upgrade processess
+Please see the dedicated [UPGRADING](UPGRADING.md) document for all upgrade processes
 
 Since version `1.1.0` we no longer default to using `main` but use tags to make sure deployments are versioned.
 With every new release all migration steps shall be written in the [UPGRADING](UPGRADING.md) document.
