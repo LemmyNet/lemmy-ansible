@@ -16,9 +16,8 @@ status_codes:
   DENY: 200
 
 store:
-  backend: bbolt
-  parameters:
-    path: /data/anubis.bdb
+  backend: memory
+  parameters: {}
 
 thresholds:
   - name: minimal-suspicion
