@@ -97,7 +97,7 @@ This is a major change and has required reading! tl;dr
 
 #### Update your pict-rs sled-database (Optional)
 
-If you are happy for pict-rs to be down _for a while_ ~go straight to our `1.3.1` git tag which updates pictrs to 0.5.0~. Otherwise keep reading.
+If you are happy for pict-rs to be down _for a while_ ~~go straight to our `1.3.1` git tag which updates pictrs to 0.5.0~~. Otherwise keep reading.
 Starting with 0.5.0 your database will automatically upgrade to the latest version, which will cause downtime for your users.
 As such there is an intermediary step where you can upgrade your database in the background to prepare for 0.5 (Reference documentation)[https://git.asonix.dog/asonix/pict-rs/releases#user-content-upgrade-preparation-endpoint]. This ensure no-one is caught out by unforeseen downtime of multiple services.
 
