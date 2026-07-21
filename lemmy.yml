@@ -89,6 +89,12 @@
         name: nginx
         state: reloaded
 
+    - name: Reload anubis
+      community.docker.docker_compose_v2:
+        name: docker1
+        services: anubis
+        state: restarted
+
   tasks:
     - name: Ensure target system is Debian or Ubuntu
       ansible.builtin.assert:
@@ -269,6 +275,9 @@
             - src: "templates/nginx.conf"
               dest: "/etc/nginx/sites-available/{{ domain }}.conf"
               mode: "0644"
+            - src: "templates/botPolicy.yaml"
+              dest: "{{ lemmy_base_dir }}/{{ domain }}/botPolicy.yaml"
+              mode: "0644"
           notify: Reload nginx
           vars:
             lemmy_docker_image: "dessalines/lemmy:{{ lemmy_version | default(lookup('file', 'VERSION')) }}"
@@ -277,6 +286,13 @@
             - configs
             - nginx
             - docker
+
+        - name: Add anubis bot policy
+          ansible.builtin.template:
+            src: "templates/botPolicy.yaml"
+            dest: "{{ lemmy_base_dir }}/{{ domain }}/botPolicy.yaml"
+            mode: "0644"
+          notify: Reload anubis
 
         - name: Set up nginx sites-enabled symlink
           notify: Reload nginx
