@@ -44,6 +44,7 @@ lemmyui_env_vars:
   - LEMMY_UI_LEMMY_INTERNAL_HOST: lemmy:8536
   - LEMMY_UI_LEMMY_EXTERNAL_HOST: "{{ domain }}"
   - LEMMY_UI_HTTPS: true
+  - NODE_ENV: production
 
 postfix_env_vars:
   - POSTFIX_myhostname: "{{ domain }}"
