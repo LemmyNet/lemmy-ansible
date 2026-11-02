@@ -16,6 +16,99 @@ Before upgrading to a new version, check the [join-lemmy news](https://join-lemm
 
 ## Specific Version Upgrades
 
+### Upgrading to postgres 18 (Lemmy 0.19.21)
+
+> **Read this whole section before you start.**
+
+This release moves postgres from v16 to v18. The `pgautoupgrade` image upgrades your database by itself, in place, the first time the new postgres container starts, so the regular deployment does the upgrade. Your instance is down while it runs: on a small instance it took under a minute, and a large database takes longer, because every database is reindexed after the upgrade.
+
+Postgres 18 keeps its data in a different place inside the container (`/var/lib/postgresql/18/docker` instead of `/var/lib/postgresql/data`), so the data volume is now mounted one level higher. `templates/docker-compose.yml` changes both lines together:
+
+```
+image: docker.io/pgautoupgrade/pgautoupgrade:18-alpine
+volumes:
+  - ./volumes/postgres:/var/lib/postgresql:Z
+```
+
+**If you keep your own `docker-compose.yml` (a fork, or a custom file), change both of these lines.** With only the image tag changed, postgres 18 starts on a new, blank database, and your instance will look as if it has no users or posts.
+
+#### Steps
+
+In the steps below, `{my_lemmy_domain}` is your domain, as in `inventory/hosts`, and `/srv/lemmy` is your `lemmy_base_dir` (use yours if it is different).
+
+1. **On your server, back up the database.** This writes a full copy of it to a file next to your `docker-compose.yml`:
+
+   ```
+   cd /srv/lemmy/{my_lemmy_domain}/
+   sudo docker compose exec -T postgres pg_dumpall -U lemmy | sudo tee 16_backup.sql > /dev/null
+   ls -lh 16_backup.sql
+   ```
+
+   The file should have a size of more than a few kilobytes. If it shows `0`, the postgres container was not running (the backup command then prints `service "postgres" is not running`): `sudo docker compose ps` lists only running containers, so postgres will be missing from it. Start it with `sudo docker compose up -d`, and run the backup again before you go on. Keep the file until you are sure everything works, for at least a few days.
+
+2. **On the machine you run Ansible from, update your `lemmy-ansible` folder** to the release that carries this change. If you installed by the README, your folder is on a release tag rather than a branch, so `git pull` stops with `You are not currently on a branch`; fetch the new release and check it out instead:
+
+   ```
+   git fetch --tags && git checkout *version_name*
+   ```
+
+   `git describe --tags` should now print the new version.
+
+3. **Run the deployment** as usual:
+
+   ```
+   ansible-playbook -i inventory/hosts lemmy.yml --become
+   ```
+
+4. **On your server, watch the upgrade finish:**
+
+   ```
+   cd /srv/lemmy/{my_lemmy_domain}/
+   sudo docker compose logs -f postgres
+   ```
+
+   Wait for the line `Upgrade to PostgreSQL 18.x complete.`, then press `Ctrl+C`.
+
+5. **Check the result:**
+
+   ```
+   sudo docker compose exec -T postgres psql -U lemmy -c 'select version()'
+   sudo ls volumes/postgres
+   ```
+
+   The first command should print `PostgreSQL 18`, and the second should list a folder named `18`. Then open your site and check that your existing posts, comments and users are there.
+
+#### Going back to postgres 16
+
+To return to postgres 16 with the backup from step 1:
+
+1. On your server, stop the instance and move the upgraded data aside:
+
+   ```
+   cd /srv/lemmy/{my_lemmy_domain}/
+   sudo docker compose down
+   sudo mv volumes/postgres volumes/postgres_18
+   ```
+
+2. On the machine you run Ansible from, check out the release you had before, and run the deployment. This starts postgres 16 with a new, blank database:
+
+   ```
+   git checkout *previous_version_name*
+   ansible-playbook -i inventory/hosts lemmy.yml --become
+   ```
+
+3. On your server, stop Lemmy, remove the new, blank database it just created, load the backup (which creates the database again, with your data), and restart:
+
+   ```
+   cd /srv/lemmy/{my_lemmy_domain}/
+   sudo docker compose stop lemmy lemmy-ui
+   sudo docker compose exec -T postgres psql -U lemmy -d postgres -c 'DROP DATABASE lemmy'
+   sudo docker compose exec -T postgres psql -U lemmy -d postgres < 16_backup.sql
+   sudo docker compose start lemmy lemmy-ui
+   ```
+
+   The restore prints one line, `role "lemmy" already exists`; that is expected, because the new database server already has that user.
+
 ### Upgrading to 1.5.0 (Lemmy 0.19.4, Pict-rs 0.5, postgres 16)
 
 > **DO NOT RUN IT WITHOUT READING THIS WHOLE SECTION**

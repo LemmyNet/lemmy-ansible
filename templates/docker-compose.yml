@@ -88,7 +88,7 @@ services:
     logging: *default-logging
 
   postgres:
-    image: docker.io/pgautoupgrade/pgautoupgrade:16-alpine
+    image: docker.io/pgautoupgrade/pgautoupgrade:18-alpine
     hostname: postgres
 {% if postgres_env_vars is defined and postgres_env_vars|length > 0 %}
     environment:
@@ -99,7 +99,7 @@ services:
 {% endfor %}
 {% endif %}
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data:Z
+      - ./volumes/postgres:/var/lib/postgresql:Z
       - ./customPostgresql.conf:/etc/postgresql.conf:Z
     restart: always
     command: postgres -c config_file=/etc/postgresql.conf
